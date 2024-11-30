@@ -13,13 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Java Build
+name: Java Maven
 
 on:
   pull_request:
   push:
     branches:
       - master
+      - release/struts-7-0-x
 
 permissions: read-all
 
@@ -29,31 +30,18 @@ env:
 
 jobs:
   build:
+    name: Build and Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ '8', '11', '17' ]
+        java: [ '17', '21' ]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3.0.2
-      - name: Set up cache
-        uses: actions/cache@v3.0.8
+        uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-      - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v3
-        with:
-          distribution: adopt
+          distribution: temurin
           java-version: ${{ matrix.java }}
+          cache: 'maven'
       - name: Build with Maven on Java ${{ matrix.java }}
-        if: matrix.java != '11'
-        run: mvn -B -V -DskipAssembly test --no-transfer-progress
-      - name: Code coverage on Java ${{ matrix.java }}
-        if: matrix.java == '11'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-        run: mvn -B -V -Pcoverage -DskipAssembly verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar --no-transfer-progress
+        run: mvn -B -V -DskipAssembly verify --no-transfer-progress

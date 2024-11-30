@@ -18,9 +18,11 @@
  */
 package org.apache.struts2.components;
 
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.inject.Inject;
+import org.apache.struts2.util.ValueStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.struts2.ognl.ThreadAllowlist;
 import org.apache.struts2.util.MakeIterator;
 import org.apache.struts2.views.annotations.StrutsTag;
 import org.apache.struts2.views.annotations.StrutsTagAttribute;
@@ -188,8 +190,8 @@ import java.util.List;
  * <!-- START SNIPPET: example6description -->
  *
  * <p>Another way to create a simple loop, similar to JSTL's
- * &lt;c:forEach begin="..." end="..." ...&gt; is to use some 
- * OGNL magic, which provides some under-the-covers magic to 
+ * &lt;c:forEach begin="..." end="..." ...&gt; is to use some
+ * OGNL magic, which provides some under-the-covers magic to
  * make 0-n loops trivial. This example also loops five times.</p>
  *
  * <!-- END SNIPPET: example6description -->
@@ -237,9 +239,15 @@ public class IteratorComponent extends ContextBean {
     protected Integer end;
     protected String stepStr;
     protected Integer step;
+    private ThreadAllowlist threadAllowlist;
 
     public IteratorComponent(ValueStack stack) {
         super(stack);
+    }
+
+    @Inject
+    public void setThreadAllowlist(ThreadAllowlist threadAllowlist) {
+        this.threadAllowlist = threadAllowlist;
     }
 
     public boolean start(Writer writer) {
@@ -281,8 +289,7 @@ public class IteratorComponent extends ContextBean {
                     if (end == null)
                         end = step > 0 ? values.length - 1 : 0;
                     iterator = new CounterIterator(begin, end, step, Arrays.asList(values));
-                } else if (iteratorTarget instanceof List) {
-                    List values = (List) iteratorTarget;
+                } else if (iteratorTarget instanceof List values) {
                     if (end == null)
                         end = step > 0 ? values.size() - 1 : 0;
                     iterator = new CounterIterator(begin, end, step, values);
@@ -298,6 +305,10 @@ public class IteratorComponent extends ContextBean {
         if ((iterator != null) && iterator.hasNext()) {
             Object currentValue = iterator.next();
             stack.push(currentValue);
+
+            if (currentValue != null) {
+                threadAllowlist.allowClass(currentValue.getClass());
+            }
 
             String var = getVar();
 
@@ -354,9 +365,9 @@ public class IteratorComponent extends ContextBean {
 
     static class CounterIterator implements Iterator<Object> {
         private int step;
-        private int end;
+        private final int end;
         private int currentIndex;
-        private List<Object> values;
+        private final List<Object> values;
 
         CounterIterator(Integer begin, Integer end, Integer step, List<Object> values) {
             this.end = end;
@@ -366,11 +377,13 @@ public class IteratorComponent extends ContextBean {
             this.values = values;
         }
 
+        @Override
         public boolean hasNext() {
             int next = peekNextIndex();
             return step > 0 ? next <= end : next >= end;
         }
 
+        @Override
         public Object next() {
             if (hasNext()) {
                 int nextIndex = peekNextIndex();
@@ -385,6 +398,7 @@ public class IteratorComponent extends ContextBean {
            return currentIndex + step;
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException("Values cannot be removed from this iterator");
         }

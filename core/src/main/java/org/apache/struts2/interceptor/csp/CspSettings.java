@@ -18,8 +18,8 @@
  */
 package org.apache.struts2.interceptor.csp;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * CspSettings interface used by the {@link CspInterceptor} to add the CSP header to the response.
@@ -37,17 +37,12 @@ public interface CspSettings {
     String SCRIPT_SRC = "script-src";
     String BASE_URI = "base-uri";
     String REPORT_URI = "report-uri";
+    String REPORT_TO = "report-to";
     String NONE = "none";
     String STRICT_DYNAMIC = "strict-dynamic";
     String HTTP = "http:";
     String HTTPS = "https:";
     String CSP_REPORT_TYPE = "application/csp-report";
-
-    /**
-     * @deprecated use {@link #addCspHeaders(HttpServletRequest, HttpServletResponse)} instead
-     */
-    @Deprecated
-    void addCspHeaders(HttpServletResponse response);
 
     void addCspHeaders(HttpServletRequest request, HttpServletResponse response);
 
@@ -55,6 +50,13 @@ public interface CspSettings {
      * Sets the uri where csp violation reports will be sent
      */
     void setReportUri(String uri);
+
+    /**
+     * Sets the report group where csp violation reports will be sent
+     *
+     * @since Struts 6.5.0
+     */
+    void setReportTo(String group);
 
     /**
      * Sets CSP headers in enforcing mode when true, and report-only when false

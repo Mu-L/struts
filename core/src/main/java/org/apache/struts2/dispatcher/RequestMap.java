@@ -18,7 +18,9 @@
  */
 package org.apache.struts2.dispatcher;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Enumeration;
@@ -30,10 +32,12 @@ import java.util.Set;
  */
 public class RequestMap extends AbstractMap<String, Object> implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -7675640869293787926L;
 
+    private final HttpServletRequest request;
+
     private Set<Entry<String, Object>> entries;
-    private HttpServletRequest request;
 
     /**
      * Saves the request to use as the backing for getting and setting values
@@ -43,7 +47,6 @@ public class RequestMap extends AbstractMap<String, Object> implements Serializa
     public RequestMap(final HttpServletRequest request) {
         this.request = request;
     }
-
 
     /**
      * Removes all attributes from the request as well as clears entries in this map.
@@ -94,8 +97,12 @@ public class RequestMap extends AbstractMap<String, Object> implements Serializa
      * @param key the name of the request attribute.
      * @return the request attribute or <tt>null</tt> if it doesn't exist.
      */
-    public Object get(final String key) {
-        return request.getAttribute(key);
+    @Override
+    public Object get(final Object key) {
+        if (key == null) {
+            return null;
+        }
+        return request.getAttribute(key.toString());
     }
 
     /**
@@ -121,11 +128,16 @@ public class RequestMap extends AbstractMap<String, Object> implements Serializa
      * @param key the name of the attribute to remove.
      * @return the value that was removed or <tt>null</tt> if the value was not found (and hence, not removed).
      */
-    public Object remove(final String key) {
+    @Override
+    public Object remove(final Object key) {
+        if (key == null) {
+            return null;
+        }
+
         entries = null;
 
         Object value = get(key);
-        request.removeAttribute(key);
+        request.removeAttribute(key.toString());
 
         return value;
     }

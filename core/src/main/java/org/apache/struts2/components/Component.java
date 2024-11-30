@@ -18,10 +18,12 @@
  */
 package org.apache.struts2.components;
 
-import com.opensymphony.xwork2.inject.Inject;
-import com.opensymphony.xwork2.security.NotExcludedAcceptedPatternsChecker;
-import com.opensymphony.xwork2.util.TextParseUtil;
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.inject.Inject;
+import org.apache.struts2.security.NotExcludedAcceptedPatternsChecker;
+import org.apache.struts2.util.TextParseUtil;
+import org.apache.struts2.util.ValueStack;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -34,11 +36,10 @@ import org.apache.struts2.dispatcher.mapper.ActionMapping;
 import org.apache.struts2.util.ComponentUtils;
 import org.apache.struts2.util.FastByteArrayOutputStream;
 import org.apache.struts2.views.annotations.StrutsTagAttribute;
-import org.apache.struts2.views.jsp.TagUtils;
 import org.apache.struts2.views.util.UrlHelper;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -70,7 +71,7 @@ public class Component {
     protected boolean devMode = false;
     protected boolean escapeHtmlBody = false;
     protected ValueStack stack;
-    protected Map<String, Object> parameters;
+    protected Map<String, Object> attributes;
     protected ActionMapper actionMapper;
     protected boolean throwExceptionOnELFailure;
     protected boolean performClearTagStateForTagPoolingServers = false;
@@ -85,7 +86,7 @@ public class Component {
      */
     public Component(ValueStack stack) {
         this.stack = stack;
-        this.parameters = new LinkedHashMap<>();
+        this.attributes = new LinkedHashMap<>();
         getComponentStack().push(this);
     }
 
@@ -278,7 +279,7 @@ public class Component {
      */
     protected StrutsException fieldError(String field, String errorMsg, Exception e) {
         String msg = "tag '" + getComponentName() + "', field '" + field +
-            (parameters != null && parameters.containsKey("name") ? "', name '" + parameters.get("name") : "") +
+            (attributes != null && attributes.containsKey("name") ? "', name '" + attributes.get("name") : "") +
             "': " + errorMsg;
         throw new StrutsException(msg, e);
     }
@@ -372,8 +373,8 @@ public class Component {
      * evaluating to String.class, else the whole <code>expression</code> is evaluated
      * against the stack.
      *
-     * @param expression   OGNL expression.
-     * @param toType the type expected to find.
+     * @param expression OGNL expression.
+     * @param toType     the type expected to find.
      * @return the Object found, or <tt>null</tt> if not found.
      */
     protected Object findValue(String expression, Class<?> toType) {
@@ -429,7 +430,7 @@ public class Component {
         String result;
 
         if (namespace == null) {
-            result = TagUtils.buildNamespace(actionMapper, stack, req);
+            result = getNamespace(stack);
         } else {
             result = findString(namespace);
         }
@@ -441,26 +442,32 @@ public class Component {
         return result;
     }
 
+    protected String getNamespace(ValueStack stack) {
+        ActionContext context = ActionContext.of(stack.getContext());
+        ActionInvocation invocation = context.getActionInvocation();
+        return invocation.getProxy().getNamespace();
+    }
+
     /**
      * Pushes this component's parameter Map as well as the component itself on to the stack
      * and then copies the supplied parameters over. Because the component's parameter Map is
      * pushed before the component itself, any key-value pair that can't be assigned to component
      * will be set in the parameters Map.
      *
-     * @param params the parameters to copy.
+     * @param attributesToCopy the attributes to copy.
      */
-    public void copyParams(Map<String, Object> params) {
-        stack.push(parameters);
+    public void copyAttributes(Map<String, Object> attributesToCopy) {
+        stack.push(attributes);
         stack.push(this);
         try {
-            for (Map.Entry<String, Object> entry : params.entrySet()) {
+            for (Map.Entry<String, Object> entry : attributesToCopy.entrySet()) {
                 String key = entry.getKey();
 
                 if (key.indexOf('-') >= 0) {
                     // UI component attributes may contain hypens (e.g. data-ajax), but ognl
                     // can't handle that, and there can't be a component property with a hypen
-                    // so into the parameters map it goes. See WW-4493
-                    parameters.put(key, entry.getValue());
+                    // so into the attributes map it goes. See WW-4493
+                    attributes.put(key, entry.getValue());
                 } else {
                     stack.setValue(key, entry.getValue());
                 }
@@ -486,21 +493,21 @@ public class Component {
     }
 
     /**
-     * Gets the parameters.
+     * Gets the attributes.
      *
-     * @return the parameters. Is never <tt>null</tt>.
+     * @return the attributes. It's never <tt>null</tt>.
      */
-    public Map<String, Object> getParameters() {
-        return parameters;
+    public Map<String, Object> getAttributes() {
+        return attributes;
     }
 
     /**
-     * Adds all the given parameters to this component's own parameters.
+     * Adds all the given attributes to this component's own attributes.
      *
-     * @param params the parameters to add.
+     * @param additionalAttributes the attributes to add.
      */
-    public void addAllParameters(Map<String, Object> params) {
-        parameters.putAll(params);
+    public void addAllAttributes(Map<String, Object> additionalAttributes) {
+        attributes.putAll(additionalAttributes);
     }
 
     /**
@@ -515,7 +522,7 @@ public class Component {
      */
     public void addParameter(String key, Object value) {
         if (key != null) {
-            Map<String, Object> params = getParameters();
+            Map<String, Object> params = getAttributes();
 
             if (value == null) {
                 params.remove(key);
@@ -581,12 +588,12 @@ public class Component {
      * <em>Note:</em> All Tag classes that extend {@link org.apache.struts2.views.jsp.StrutsBodyTagSupport} must implement a setter for
      * this attribute (same name), and it must be defined at the Tag class level.
      * Defining a setter in the superclass alone is insufficient (results in "Cannot find a setter method for the attribute").
-     *
+     * <p>
      * See {@link org.apache.struts2.views.jsp.StrutsBodyTagSupport#clearTagStateForTagPoolingServers()  for additional details.
      *
      * @param performClearTagStateForTagPoolingServers true if tag state should be cleared, false otherwise.
      */
-    @StrutsTagAttribute(description="Whether to clear all tag state during doEndTag() processing (if applicable)", type="Boolean", defaultValue="false")
+    @StrutsTagAttribute(description = "Whether to clear all tag state during doEndTag() processing (if applicable)", type = "Boolean", defaultValue = "false")
     public void setPerformClearTagStateForTagPoolingServers(boolean performClearTagStateForTagPoolingServers) {
         this.performClearTagStateForTagPoolingServers = performClearTagStateForTagPoolingServers;
     }
@@ -609,7 +616,7 @@ public class Component {
         }
 
         LOG.warn("Expression [{}] isn't allowed by pattern [{}]! See Accepted / Excluded patterns at\n" +
-                "https://struts.apache.org/security/", expression, isAllowed.getAllowedPattern());
+            "https://struts.apache.org/security/", expression, isAllowed.getAllowedPattern());
 
         return false;
     }

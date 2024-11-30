@@ -20,7 +20,7 @@
  */
 package org.apache.struts2.showcase.person;
 
-import com.opensymphony.xwork2.ActionSupport;
+import org.apache.struts2.ActionSupport;
 import org.apache.struts2.convention.annotation.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,8 +35,9 @@ public class ListPeopleAction extends ActionSupport {
 	@Autowired
 	private PersonManager personManager;
 
-	private List<Person> people = new ArrayList<Person>();
+	private final List<Person> people = new ArrayList<>();
 
+	@Override
 	public String execute() {
 		people.addAll(personManager.getPeople());
 

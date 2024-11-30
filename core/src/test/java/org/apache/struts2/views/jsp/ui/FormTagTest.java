@@ -18,11 +18,11 @@
  */
 package org.apache.struts2.views.jsp.ui;
 
-import com.opensymphony.xwork2.Action;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.ActionProxy;
-import com.opensymphony.xwork2.config.entities.ActionConfig;
+import org.apache.struts2.action.Action;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.ActionProxy;
+import org.apache.struts2.config.entities.ActionConfig;
 import org.apache.struts2.StrutsConstants;
 import org.apache.struts2.TestAction;
 import org.apache.struts2.TestConfigurationProvider;
@@ -64,7 +64,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithActionAttributeContainingQueryString_clearTagStateSet() throws Exception {
@@ -93,7 +93,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithActionAttributeContainingBothActionAndMethod() throws Exception {
@@ -116,10 +116,10 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
-        public void testFormWithActionAttributeContainingBothActionAndMethod_clearTagStateSet() throws Exception {
+    public void testFormWithActionAttributeContainingBothActionAndMethod_clearTagStateSet() throws Exception {
         FormTag tag = new FormTag();
         tag.setPerformClearTagStateForTagPoolingServers(true);  // Explicitly request tag state clearing.
         tag.setPageContext(pageContext);
@@ -142,7 +142,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithoutContext() throws Exception {
@@ -164,7 +164,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithoutContext_clearTagStateSet() throws Exception {
@@ -189,7 +189,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithContext() throws Exception {
@@ -210,7 +210,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithContext_clearTagStateSet() throws Exception {
@@ -234,7 +234,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithActionAttributeContainingBothActionAndDMIMethod() throws Exception {
@@ -261,8 +261,8 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
-    }    
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
+    }
 
     public void testFormWithActionAttributeContainingBothActionAndDMIMethod_clearTagStateSet() throws Exception {
         FormTag tag = new FormTag();
@@ -276,7 +276,7 @@ public class FormTagTest extends AbstractUITagTest {
         tag.setTitle("mytitle");
         tag.setOnsubmit("submitMe()");
 
-        ((DefaultActionMapper)container.getInstance(ActionMapper.class)).setAllowDynamicMethodCalls("true");
+        ((DefaultActionMapper) container.getInstance(ActionMapper.class)).setAllowDynamicMethodCalls("true");
 
         tag.doStartTag();
         setComponentTagClearTagState(tag, true);  // Ensure component tag state clearing is set true (to match tag).
@@ -290,7 +290,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithFocusElement() throws Exception {
@@ -310,7 +310,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithFocusElement_clearTagStateSet() throws Exception {
@@ -332,7 +332,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithActionAttributeContainingBothActionAndMethodAndNamespace() throws Exception {
@@ -358,7 +358,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithActionAttributeContainingBothActionAndMethodAndNamespace_clearTagStateSet() throws Exception {
@@ -386,12 +386,12 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testForm() throws Exception {
 
-        request.setupGetServletPath("/testAction");
+        request.setServletPath("/testAction");
 
         TestAction testAction = (TestAction) action;
         testAction.setFoo("bar");
@@ -418,12 +418,12 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testForm_clearTagStateSet() throws Exception {
 
-        request.setupGetServletPath("/testAction");
+        request.setServletPath("/testAction");
 
         TestAction testAction = (TestAction) action;
         testAction.setFoo("bar");
@@ -452,12 +452,12 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormId() throws Exception {
 
-        request.setupGetServletPath("/testAction");
+        request.setServletPath("/testAction");
 
         TestAction testAction = (TestAction) action;
         testAction.setFoo("bar");
@@ -479,12 +479,12 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormId_clearTagStateSet() throws Exception {
 
-        request.setupGetServletPath("/testAction");
+        request.setServletPath("/testAction");
 
         TestAction testAction = (TestAction) action;
         testAction.setFoo("bar");
@@ -508,12 +508,12 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormNoNameOrId() throws Exception {
 
-        request.setupGetServletPath("/testAction");
+        request.setServletPath("/testAction");
 
         TestAction testAction = (TestAction) action;
         testAction.setFoo("bar");
@@ -537,12 +537,12 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
-     public void testFormNoNameOrId_clearTagStateSet() throws Exception {
+    public void testFormNoNameOrId_clearTagStateSet() throws Exception {
 
-        request.setupGetServletPath("/testAction");
+        request.setServletPath("/testAction");
 
         TestAction testAction = (TestAction) action;
         testAction.setFoo("bar");
@@ -569,7 +569,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     /**
@@ -610,14 +610,14 @@ public class FormTagTest extends AbstractUITagTest {
         freshParamTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(t, freshParamTag));
+            strutsBodyTagsAreReflectionEqual(t, freshParamTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         FormTag freshTag = new FormTag();
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     /**
@@ -663,7 +663,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshParamTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(t, freshParamTag));
+            strutsBodyTagsAreReflectionEqual(t, freshParamTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         FormTag freshTag = new FormTag();
@@ -671,7 +671,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     /**
@@ -711,14 +711,14 @@ public class FormTagTest extends AbstractUITagTest {
         freshParamTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(t, freshParamTag));
+            strutsBodyTagsAreReflectionEqual(t, freshParamTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         FormTag freshTag = new FormTag();
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     /**
@@ -763,7 +763,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshParamTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(t, freshParamTag));
+            strutsBodyTagsAreReflectionEqual(t, freshParamTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         FormTag freshTag = new FormTag();
@@ -771,7 +771,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     /**
@@ -798,7 +798,7 @@ public class FormTagTest extends AbstractUITagTest {
         t.setList("{}");
 
         tag.doStartTag();
-        tag.getComponent().getParameters().put("actionClass", IntValidationAction.class);
+        tag.getComponent().getAttributes().put("actionClass", IntValidationAction.class);
         t.doStartTag();
         t.doEndTag();
         tag.doEndTag();
@@ -810,14 +810,14 @@ public class FormTagTest extends AbstractUITagTest {
         freshParamTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(t, freshParamTag));
+            strutsBodyTagsAreReflectionEqual(t, freshParamTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         FormTag freshTag = new FormTag();
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     /**
@@ -847,7 +847,7 @@ public class FormTagTest extends AbstractUITagTest {
 
         tag.doStartTag();
         setComponentTagClearTagState(tag, true);  // Ensure component tag state clearing is set true (to match tag).
-        tag.getComponent().getParameters().put("actionClass", IntValidationAction.class);
+        tag.getComponent().getAttributes().put("actionClass", IntValidationAction.class);
         t.doStartTag();
         setComponentTagClearTagState(t, true);  // Ensure component tag state clearing is set true (to match tag).
         t.doEndTag();
@@ -861,7 +861,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshParamTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(t, freshParamTag));
+            strutsBodyTagsAreReflectionEqual(t, freshParamTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         FormTag freshTag = new FormTag();
@@ -869,10 +869,10 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
-/**
+    /**
      * Tests the numbers are formatted correctly to not break the javascript, using doubles
      */
     public void testFormWithCustomOnsubmitEnabledWithValidateEnabled4() throws Exception {
@@ -896,7 +896,7 @@ public class FormTagTest extends AbstractUITagTest {
         t.setList("{}");
 
         tag.doStartTag();
-        tag.getComponent().getParameters().put("actionClass", DoubleValidationAction.class);
+        tag.getComponent().getAttributes().put("actionClass", DoubleValidationAction.class);
         t.doStartTag();
         t.doEndTag();
         tag.doEndTag();
@@ -908,17 +908,17 @@ public class FormTagTest extends AbstractUITagTest {
         freshParamTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(t, freshParamTag));
+            strutsBodyTagsAreReflectionEqual(t, freshParamTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         FormTag freshTag = new FormTag();
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
-/**
+    /**
      * Tests the numbers are formatted correctly to not break the javascript, using doubles
      */
     public void testFormWithCustomOnsubmitEnabledWithValidateEnabled4_clearTagStateSet() throws Exception {
@@ -945,7 +945,7 @@ public class FormTagTest extends AbstractUITagTest {
 
         tag.doStartTag();
         setComponentTagClearTagState(tag, true);  // Ensure component tag state clearing is set true (to match tag).
-        tag.getComponent().getParameters().put("actionClass", DoubleValidationAction.class);
+        tag.getComponent().getAttributes().put("actionClass", DoubleValidationAction.class);
         t.doStartTag();
         setComponentTagClearTagState(t, true);  // Ensure component tag state clearing is set true (to match tag).
         t.doEndTag();
@@ -959,7 +959,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshParamTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(t, freshParamTag));
+            strutsBodyTagsAreReflectionEqual(t, freshParamTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         FormTag freshTag = new FormTag();
@@ -967,7 +967,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     private void prepareMockInvocation() throws Exception {
@@ -1018,14 +1018,14 @@ public class FormTagTest extends AbstractUITagTest {
         freshParamTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(t, freshParamTag));
+            strutsBodyTagsAreReflectionEqual(t, freshParamTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         FormTag freshTag = new FormTag();
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     /**
@@ -1064,7 +1064,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshParamTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(t, freshParamTag));
+            strutsBodyTagsAreReflectionEqual(t, freshParamTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         FormTag freshTag = new FormTag();
@@ -1072,7 +1072,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     /**
@@ -1093,7 +1093,7 @@ public class FormTagTest extends AbstractUITagTest {
             put("configProviders", TestConfigurationProvider.class.getName());
         }});
         createMocks();
-        request.setupGetServletPath("/testNamespace/testNamespaceAction");
+        request.setServletPath("/testNamespace/testNamespaceAction");
 
         FormTag tag = new FormTag();
         tag.setPageContext(pageContext);
@@ -1112,7 +1112,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     /**
@@ -1128,12 +1128,12 @@ public class FormTagTest extends AbstractUITagTest {
      * </p>
      */
     public void testFormTagWithDifferentActionExtension_clearTagStateSet() throws Exception {
-        initDispatcher(new HashMap<String,String>(){{ 
+        initDispatcher(new HashMap<String, String>() {{
             put(StrutsConstants.STRUTS_ACTION_EXTENSION, "jspa");
             put("configProviders", TestConfigurationProvider.class.getName());
         }});
         createMocks();
-        request.setupGetServletPath("/testNamespace/testNamespaceAction");
+        request.setServletPath("/testNamespace/testNamespaceAction");
 
         FormTag tag = new FormTag();
         tag.setPerformClearTagStateForTagPoolingServers(true);  // Explicitly request tag state clearing.
@@ -1155,7 +1155,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     /**
@@ -1165,7 +1165,7 @@ public class FormTagTest extends AbstractUITagTest {
      * doesn't create an action of &quot;/testNamespace/testNamespaceAction.action&quot;
      */
     public void testFormTagWithDifferentActionExtensionHardcoded() throws Exception {
-        request.setupGetServletPath("/testNamespace/testNamespaceAction");
+        request.setServletPath("/testNamespace/testNamespaceAction");
 
         FormTag tag = new FormTag();
         tag.setPageContext(pageContext);
@@ -1183,7 +1183,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     /**
@@ -1193,7 +1193,7 @@ public class FormTagTest extends AbstractUITagTest {
      * doesn't create an action of &quot;/testNamespace/testNamespaceAction.action&quot;
      */
     public void testFormTagWithDifferentActionExtensionHardcoded_clearTagStateSet() throws Exception {
-        request.setupGetServletPath("/testNamespace/testNamespaceAction");
+        request.setServletPath("/testNamespace/testNamespaceAction");
 
         FormTag tag = new FormTag();
         tag.setPerformClearTagStateForTagPoolingServers(true);  // Explicitly request tag state clearing.
@@ -1214,11 +1214,11 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithNamespaceDefaulting() throws Exception {
-        request.setupGetServletPath("/testNamespace/testNamespaceAction");
+        withRequestPath("/testNamespace/testNamespaceAction");
 
         TestAction testAction = (TestAction) action;
         testAction.setFoo("bar");
@@ -1239,11 +1239,11 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithNamespaceDefaulting_clearTagStateSet() throws Exception {
-        request.setupGetServletPath("/testNamespace/testNamespaceAction");
+        withRequestPath("/testNamespace/testNamespaceAction");
 
         TestAction testAction = (TestAction) action;
         testAction.setFoo("bar");
@@ -1267,11 +1267,11 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormTagForStackOverflowException1() throws Exception {
-        request.setRequestURI("/testAction");
+        withRequestPath("/testAction");
 
         FormTag form1 = new FormTag();
         form1.setPageContext(pageContext);
@@ -1300,18 +1300,18 @@ public class FormTagTest extends AbstractUITagTest {
         // FormTag has no non=default state set here, so it compares as equal with the default tag clear state as well.
         assertTrue("Tag state after doEndTag() under default tag clear state is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form1, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form1, freshFormTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         ActionTag freshTag = new ActionTag();
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormTagForStackOverflowException1_clearTagStateSet() throws Exception {
-        request.setRequestURI("/testAction");
+        withRequestPath("/testAction");
 
         FormTag form1 = new FormTag();
         form1.setPerformClearTagStateForTagPoolingServers(true);  // Explicitly request tag state clearing.
@@ -1344,7 +1344,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshFormTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form1, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form1, freshFormTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         ActionTag freshTag = new ActionTag();
@@ -1352,11 +1352,11 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormTagForStackOverflowException2() throws Exception {
-        request.setRequestURI("/requestUri");
+        withRequestPath("/requestUri");
 
         FormTag form1 = new FormTag();
         form1.setPageContext(pageContext);
@@ -1392,25 +1392,25 @@ public class FormTagTest extends AbstractUITagTest {
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         FormTag freshFormTag = new FormTag();
         freshFormTag.setPageContext(pageContext);
-         // FormTag has no non=default state set here, so it compares as equal with the default tag clear state as well.
-        assertTrue("Tag state after doEndTag() under default tag clear state is inequal to new Tag with pageContext/parent set.  " +
-                "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form1, freshFormTag));
         // FormTag has no non=default state set here, so it compares as equal with the default tag clear state as well.
         assertTrue("Tag state after doEndTag() under default tag clear state is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form2, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form1, freshFormTag));
+        // FormTag has no non=default state set here, so it compares as equal with the default tag clear state as well.
+        assertTrue("Tag state after doEndTag() under default tag clear state is inequal to new Tag with pageContext/parent set.  " +
+                "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
+            strutsBodyTagsAreReflectionEqual(form2, freshFormTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         ActionTag freshTag = new ActionTag();
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormTagForStackOverflowException2_clearTagStateSet() throws Exception {
-        request.setRequestURI("/requestUri");
+        withRequestPath("/requestUri");
 
         FormTag form1 = new FormTag();
         form1.setPerformClearTagStateForTagPoolingServers(true);  // Explicitly request tag state clearing.
@@ -1455,10 +1455,10 @@ public class FormTagTest extends AbstractUITagTest {
         freshFormTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form1, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form1, freshFormTag));
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form2, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form2, freshFormTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         ActionTag freshTag = new ActionTag();
@@ -1466,11 +1466,11 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormTagForStackOverflowException3() throws Exception {
-        request.setRequestURI("/requestUri");
+        withRequestPath("/requestUri");
 
         FormTag form1 = new FormTag();
         form1.setPageContext(pageContext);
@@ -1519,26 +1519,26 @@ public class FormTagTest extends AbstractUITagTest {
         // FormTag has no non=default state set here, so it compares as equal with the default tag clear state as well.
         assertTrue("Tag state after doEndTag() under default tag clear state is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form1, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form1, freshFormTag));
         // FormTag has no non=default state set here, so it compares as equal with the default tag clear state as well.
         assertTrue("Tag state after doEndTag() under default tag clear state is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form2, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form2, freshFormTag));
         // FormTag has no non=default state set here, so it compares as equal with the default tag clear state as well.
         assertTrue("Tag state after doEndTag() under default tag clear state is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form3, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form3, freshFormTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         ActionTag freshTag = new ActionTag();
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormTagForStackOverflowException3_clearTagStateSet() throws Exception {
-        request.setRequestURI("/requestUri");
+        withRequestPath("/requestUri");
 
         FormTag form1 = new FormTag();
         form1.setPerformClearTagStateForTagPoolingServers(true);  // Explicitly request tag state clearing.
@@ -1595,13 +1595,13 @@ public class FormTagTest extends AbstractUITagTest {
         freshFormTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form1, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form1, freshFormTag));
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form2, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form2, freshFormTag));
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form3, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form3, freshFormTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         ActionTag freshTag = new ActionTag();
@@ -1609,11 +1609,11 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormComponentIsRemoved() throws Exception {
-        request.setRequestURI("/requestUri");
+        withRequestPath("/requestUri");
 
         FormTag form = new FormTag();
         form.setPageContext(pageContext);
@@ -1631,11 +1631,11 @@ public class FormTagTest extends AbstractUITagTest {
         // FormTag has no non=default state set here, so it compares as equal with the default tag clear state as well.
         assertTrue("Tag state after doEndTag() under default tag clear state is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form, freshTag));
+            strutsBodyTagsAreReflectionEqual(form, freshTag));
     }
 
     public void testFormComponentIsRemoved_clearTagStateSet() throws Exception {
-        request.setRequestURI("/requestUri");
+        withRequestPath("/requestUri");
 
         FormTag form = new FormTag();
         form.setPerformClearTagStateForTagPoolingServers(true);  // Explicitly request tag state clearing.
@@ -1655,13 +1655,11 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form, freshTag));
+            strutsBodyTagsAreReflectionEqual(form, freshTag));
     }
 
     public void testFormWithNoAction() throws Exception {
-        request.setupGetServletPath("/");
-        request.setupGetContextPath("/");
-        request.setRequestURI("/foo.jsp");
+        withRequestPath("/foo.jsp");
 
         FormTag tag = new FormTag();
         tag.setPageContext(pageContext);
@@ -1676,13 +1674,11 @@ public class FormTagTest extends AbstractUITagTest {
         // FormTag has no non=default state set here, so it compares as equal with the default tag clear state as well.
         assertTrue("Tag state after doEndTag() under default tag clear state is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithNoAction_clearTagStateSet() throws Exception {
-        request.setupGetServletPath("/");
-        request.setupGetContextPath("/");
-        request.setRequestURI("/foo.jsp");
+        withRequestPath("/foo.jsp");
 
         FormTag tag = new FormTag();
         tag.setPerformClearTagStateForTagPoolingServers(true);  // Explicitly request tag state clearing.
@@ -1699,12 +1695,12 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithStaticAction() throws Exception {
-        request.setupGetServletPath("/");
-        request.setupGetContextPath("/");
+        request.setServletPath("/");
+        request.setContextPath("/");
         request.setRequestURI("/foo.jsp");
 
         FormTag tag = new FormTag();
@@ -1720,12 +1716,12 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithStaticAction_clearTagStateSet() throws Exception {
-        request.setupGetServletPath("/");
-        request.setupGetContextPath("/");
+        request.setServletPath("/");
+        request.setContextPath("/");
         request.setRequestURI("/foo.jsp");
 
         FormTag tag = new FormTag();
@@ -1744,11 +1740,11 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithActionAndExtension() throws Exception {
-        request.setupGetServletPath("/BLA");
+        request.setServletPath("/BLA");
 
         FormTag tag = new FormTag();
         tag.setPageContext(pageContext);
@@ -1766,11 +1762,11 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithActionAndExtension_clearTagStateSet() throws Exception {
-        request.setupGetServletPath("/BLA");
+        request.setServletPath("/BLA");
 
         FormTag tag = new FormTag();
         tag.setPerformClearTagStateForTagPoolingServers(true);  // Explicitly request tag state clearing.
@@ -1791,7 +1787,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testFormWithTopLabelPosition() throws Exception {
@@ -1818,14 +1814,14 @@ public class FormTagTest extends AbstractUITagTest {
         freshFormTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form, freshFormTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         TextFieldTag freshTag = new TextFieldTag();
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(text, freshTag));
+            strutsBodyTagsAreReflectionEqual(text, freshTag));
     }
 
     public void testFormWithTopLabelPosition_clearTagStateSet() throws Exception {
@@ -1857,7 +1853,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshFormTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form, freshFormTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         TextFieldTag freshTag = new TextFieldTag();
@@ -1865,7 +1861,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(text, freshTag));
+            strutsBodyTagsAreReflectionEqual(text, freshTag));
     }
 
     public void testFormWithTopLabelPositionWithElementOverride() throws Exception {
@@ -1893,14 +1889,14 @@ public class FormTagTest extends AbstractUITagTest {
         freshFormTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form, freshFormTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         TextFieldTag freshTag = new TextFieldTag();
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(text, freshTag));
+            strutsBodyTagsAreReflectionEqual(text, freshTag));
     }
 
     public void testFormWithTopLabelPositionWithElementOverride_clearTagStateSet() throws Exception {
@@ -1933,7 +1929,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshFormTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form, freshFormTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         TextFieldTag freshTag = new TextFieldTag();
@@ -1941,7 +1937,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(text, freshTag));
+            strutsBodyTagsAreReflectionEqual(text, freshTag));
     }
 
     public void testFormWithTopLabelPositionCssXhtml() throws Exception {
@@ -1968,14 +1964,14 @@ public class FormTagTest extends AbstractUITagTest {
         freshFormTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form, freshFormTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         TextFieldTag freshTag = new TextFieldTag();
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(text, freshTag));
+            strutsBodyTagsAreReflectionEqual(text, freshTag));
     }
 
     public void testFormWithTopLabelPositionCssXhtml_clearTagStateSet() throws Exception {
@@ -2007,7 +2003,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshFormTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form, freshFormTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         TextFieldTag freshTag = new TextFieldTag();
@@ -2015,7 +2011,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(text, freshTag));
+            strutsBodyTagsAreReflectionEqual(text, freshTag));
     }
 
     public void testFormWithTopLabelPositionWithElementOverrideCssXhtml() throws Exception {
@@ -2043,14 +2039,14 @@ public class FormTagTest extends AbstractUITagTest {
         freshFormTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form, freshFormTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         TextFieldTag freshTag = new TextFieldTag();
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(text, freshTag));
+            strutsBodyTagsAreReflectionEqual(text, freshTag));
     }
 
     public void testFormWithTopLabelPositionWithElementOverrideCssXhtml_clearTagStateSet() throws Exception {
@@ -2083,7 +2079,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshFormTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(form, freshFormTag));
+            strutsBodyTagsAreReflectionEqual(form, freshFormTag));
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         TextFieldTag freshTag = new TextFieldTag();
@@ -2091,7 +2087,7 @@ public class FormTagTest extends AbstractUITagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(text, freshTag));
+            strutsBodyTagsAreReflectionEqual(text, freshTag));
     }
 
     @Override

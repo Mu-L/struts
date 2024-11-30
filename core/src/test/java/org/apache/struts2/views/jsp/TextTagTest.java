@@ -18,27 +18,30 @@
  */
 package org.apache.struts2.views.jsp;
 
-import com.mockobjects.servlet.MockJspWriter;
-import com.opensymphony.xwork2.Action;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.util.ValueStack;
-import com.opensymphony.xwork2.util.ValueStackFactory;
-import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.StrutsException;
-import org.apache.struts2.TestAction;
-import org.apache.struts2.components.Text;
-import org.apache.struts2.views.jsp.ui.StrutsBodyContent;
-import org.apache.struts2.views.jsp.ui.TestAction1;
+import static org.junit.Assert.assertNotEquals;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyTag;
+import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static org.junit.Assert.assertNotEquals;
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.StrutsException;
+import org.apache.struts2.TestAction;
+import org.apache.struts2.components.Text;
+import org.apache.struts2.views.jsp.ui.StrutsBodyContent;
+import org.apache.struts2.views.jsp.ui.TestAction1;
+import org.springframework.mock.web.MockJspWriter;
+
+import org.apache.struts2.action.Action;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.util.ValueStack;
+import org.apache.struts2.util.ValueStackFactory;
+
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.BodyTag;
 
 
 /**
@@ -63,7 +66,7 @@ public class TextTagTest extends AbstractTagTest {
         // simulate the condition
         // <s:text name="some.invalid.key">My Default Message</s:text>
 
-        StrutsMockBodyContent mockBodyContent = new StrutsMockBodyContent(new MockJspWriter());
+        StrutsMockBodyContent mockBodyContent = new StrutsMockBodyContent(new MockJspWriter(new StringWriter()));
         mockBodyContent.setString("Sample Of Default Message");
         tag.setBodyContent(mockBodyContent);
         tag.setName("some.invalid.key.so.we.should.get.the.default.message");
@@ -86,7 +89,7 @@ public class TextTagTest extends AbstractTagTest {
         // simulate the condition
         // <s:text name="some.invalid.key">My Default Message</s:text>
 
-        StrutsMockBodyContent mockBodyContent = new StrutsMockBodyContent(new MockJspWriter());
+        StrutsMockBodyContent mockBodyContent = new StrutsMockBodyContent(new MockJspWriter(new StringWriter()));
         mockBodyContent.setString("Sample Of Default Message");
         tag.setPerformClearTagStateForTagPoolingServers(true);  // Explicitly request tag state clearing.
         tag.setBodyContent(mockBodyContent);
@@ -397,8 +400,9 @@ public class TextTagTest extends AbstractTagTest {
         final StringBuffer buffer = writer.getBuffer();
         buffer.delete(0, buffer.length());
         ValueStack newStack = container.getInstance(ValueStackFactory.class).createValueStack();
-        newStack.getContext().put(ActionContext.LOCALE, foreignLocale);
-        newStack.getContext().put(ActionContext.CONTAINER, container);
+        ActionContext.of(newStack.getContext())
+            .withLocale(foreignLocale)
+                .withContainer(container);
         newStack.push(container.inject(TestAction1.class));
         request.setAttribute(ServletActionContext.STRUTS_VALUESTACK_KEY, newStack);
         assertNotSame(ActionContext.getContext().getValueStack().peek(), newStack.peek());
@@ -466,7 +470,7 @@ public class TextTagTest extends AbstractTagTest {
         Locale foreignLocale = getForeignLocale();
         assertNotSame(defaultLocale, foreignLocale);
 
-        ActionContext.getContext().setLocale(defaultLocale);
+        ActionContext.getContext().withLocale(defaultLocale);
         String key = "simpleKey";
         String value_default = getLocalizedMessage(defaultLocale);
         tag.setPerformClearTagStateForTagPoolingServers(true);  // Explicitly request tag state clearing.
@@ -489,9 +493,9 @@ public class TextTagTest extends AbstractTagTest {
         String value_int = getLocalizedMessage(foreignLocale);
         assertFalse(value_default.equals(value_int));
         ValueStack newStack = container.getInstance(ValueStackFactory.class).createValueStack(stack);
-        newStack.getContext().put(ActionContext.LOCALE, foreignLocale);
-        newStack.getContext().put(ActionContext.CONTAINER, container);
-        assertNotSame(newStack.getContext().get(ActionContext.LOCALE), ActionContext.getContext().getLocale());
+        ActionContext.of(newStack.getContext())
+            .withLocale(foreignLocale)
+                .withContainer(container);
         request.setAttribute(ServletActionContext.STRUTS_VALUESTACK_KEY, newStack);
         assertEquals(ActionContext.getContext().getValueStack().peek(), newStack.peek());
         tag.setName(key);  // Required as WW-5124 fix clears tag state.

@@ -18,10 +18,10 @@
  */
 package org.apache.struts2.tiles;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.config.ConfigurationException;
-import com.opensymphony.xwork2.inject.Container;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.config.ConfigurationException;
+import org.apache.struts2.inject.Container;
 import freemarker.ext.beans.BeanModel;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
@@ -33,18 +33,18 @@ import org.apache.struts2.views.freemarker.FreemarkerManager;
 import org.apache.struts2.views.freemarker.FreemarkerResult;
 import org.apache.struts2.views.freemarker.StrutsBeanWrapper;
 import org.apache.tiles.freemarker.template.TilesFMModelRepository;
-import org.apache.tiles.impl.InvalidTemplateException;
 import org.apache.tiles.request.Request;
 import org.apache.tiles.request.render.Renderer;
+import org.apache.tiles.core.impl.InvalidTemplateException;
 import org.apache.tiles.request.servlet.ServletUtil;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 public class StrutsFreeMarkerAttributeRenderer implements Renderer {
 
-    private static Logger LOG = LogManager.getLogger(StrutsFreeMarkerAttributeRenderer.class);
+    private static final Logger LOG = LogManager.getLogger(StrutsFreeMarkerAttributeRenderer.class);
 
     @Override
     public void render(String path, Request request) throws IOException {
@@ -75,7 +75,7 @@ public class StrutsFreeMarkerAttributeRenderer implements Renderer {
     }
 
     /**
-     * Depending how Tiles definition was defined, request can an instance of JspRequest (for JSPs)
+     * Depending on how Tiles definition was defined, request can an instance of JspRequest (for JSPs)
      * or a ServletRequest (FreeMarker)
      */
     protected ActionContext readActionContext(Request request) {

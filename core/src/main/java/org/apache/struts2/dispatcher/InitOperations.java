@@ -18,16 +18,11 @@
  */
 package org.apache.struts2.dispatcher;
 
-import com.opensymphony.xwork2.ActionContext;
-import org.apache.struts2.StrutsConstants;
+import org.apache.struts2.ActionContext;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * Contains initialization operations
@@ -57,7 +52,7 @@ public class InitOperations {
      * @return the static content loader
      */
     public StaticContentLoader initStaticContentLoader(HostConfig filterConfig, Dispatcher dispatcher) {
-        StaticContentLoader loader = dispatcher.getContainer().getInstance(StaticContentLoader.class);
+        StaticContentLoader loader = dispatcher.getStaticContentLoader();
         loader.setHostConfig(filterConfig);
         return loader;
     }
@@ -93,34 +88,4 @@ public class InitOperations {
     public void cleanup() {
         ActionContext.clear();
     }
-
-    /**
-     * Extract a list of patterns to exclude from request filtering
-     *
-     * @param dispatcher The dispatcher to check for exclude pattern configuration
-     * @return a List of Patterns for request to exclude if apply, or <tt>null</tt>
-     * @see org.apache.struts2.StrutsConstants#STRUTS_ACTION_EXCLUDE_PATTERN
-     */
-    public List<Pattern> buildExcludedPatternsList(Dispatcher dispatcher) {
-        String excludePatterns = dispatcher.getContainer().getInstance(String.class, StrutsConstants.STRUTS_ACTION_EXCLUDE_PATTERN);
-        String separator = dispatcher.getContainer().getInstance(String.class, StrutsConstants.STRUTS_ACTION_EXCLUDE_PATTERN_SEPARATOR);
-        if (separator == null) {
-            separator = ",";
-        }
-        return buildExcludedPatternsList(excludePatterns, separator);
-    }
-
-    private List<Pattern> buildExcludedPatternsList(String patterns, String separator) {
-        if (null != patterns && patterns.trim().length() != 0) {
-            List<Pattern> list = new ArrayList<>();
-            String[] tokens = patterns.split(separator);
-            for (String token : tokens) {
-                list.add(Pattern.compile(token.trim()));
-            }
-            return Collections.unmodifiableList(list);
-        } else {
-            return null;
-        }
-    }
-
 }

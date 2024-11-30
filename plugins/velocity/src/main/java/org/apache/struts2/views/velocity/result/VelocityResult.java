@@ -18,10 +18,16 @@
  */
 package org.apache.struts2.views.velocity.result;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.inject.Inject;
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.inject.Inject;
+import org.apache.struts2.util.ValueStack;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.JspFactory;
+import jakarta.servlet.jsp.PageContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -33,12 +39,6 @@ import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspFactory;
-import javax.servlet.jsp.PageContext;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
@@ -85,9 +85,9 @@ public class VelocityResult extends StrutsResultSupport {
     private static final long serialVersionUID = 7268830767762559424L;
 
     private static final Logger LOG = LogManager.getLogger(VelocityResult.class);
-    
+
     private String defaultEncoding;
-    private VelocityManager velocityManager;
+    private transient VelocityManager velocityManager;
     private JspFactory jspFactory = JspFactory.getDefaultFactory();
 
     public VelocityResult() {
@@ -97,12 +97,12 @@ public class VelocityResult extends StrutsResultSupport {
     public VelocityResult(String location) {
         super(location);
     }
-    
+
     @Inject(StrutsConstants.STRUTS_I18N_ENCODING)
     public void setDefaultEncoding(String val) {
         defaultEncoding = val;
     }
-    
+
     @Inject
     public void setVelocityManager(VelocityManager mgr) {
         this.velocityManager = mgr;
@@ -232,7 +232,11 @@ public class VelocityResult extends StrutsResultSupport {
      * @param location        the name of the template that is being used
      * @return the a minted Velocity context.
      */
-    protected Context createContext(VelocityManager velocityManager, ValueStack stack, HttpServletRequest request, HttpServletResponse response, String location) {
+    protected Context createContext(VelocityManager velocityManager,
+                                    ValueStack stack,
+                                    HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    String location) {
         return velocityManager.createContext(stack, request, response);
     }
 }

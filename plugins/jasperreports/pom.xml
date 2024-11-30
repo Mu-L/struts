@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.struts</groupId>
         <artifactId>struts2-plugins</artifactId>
-        <version>6.2.0-SNAPSHOT</version>
+        <version>7.0.0-M11-SNAPSHOT</version>
     </parent>
 
     <artifactId>struts2-jasperreports-plugin</artifactId>
@@ -33,13 +33,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
-            <version>6.19.1</version>
+            <version>6.21.3</version>
             <scope>provided</scope>
             <exclusions>
                 <!-- not necessary to compile and it force dependency convergence issues -->
@@ -61,11 +57,6 @@
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-junit-plugin</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

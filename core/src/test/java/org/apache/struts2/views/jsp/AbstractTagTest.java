@@ -19,10 +19,14 @@
 package org.apache.struts2.views.jsp;
 
 import com.mockobjects.dynamic.Mock;
-import com.opensymphony.xwork2.Action;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.inject.Container;
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.action.Action;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.ActionProxy;
+import org.apache.struts2.inject.Container;
+import org.apache.struts2.mock.MockActionInvocation;
+import org.apache.struts2.mock.MockActionProxy;
+import org.apache.struts2.util.ValueStack;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.StrutsInternalTestCase;
@@ -30,22 +34,23 @@ import org.apache.struts2.TestAction;
 import org.apache.struts2.dispatcher.ApplicationMap;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.apache.struts2.dispatcher.HttpParameters;
-import org.apache.struts2.dispatcher.MockDispatcher;
 import org.apache.struts2.dispatcher.RequestMap;
 import org.apache.struts2.dispatcher.SessionMap;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.JspWriter;
 import java.io.File;
 import java.io.StringWriter;
-import java.util.HashMap;
 import java.util.Map;
+
+import static java.util.Collections.emptyMap;
 
 /**
  * Base class to extend for unit testing UI Tags.
  */
 public abstract class AbstractTagTest extends StrutsInternalTestCase {
     protected Action action;
+    protected ActionProxy actionProxy;
     protected Map<String, Object> context;
     protected Map<String, Object> session;
     protected ValueStack stack;
@@ -57,6 +62,7 @@ public abstract class AbstractTagTest extends StrutsInternalTestCase {
     protected StrutsMockHttpServletRequest request;
     protected StrutsMockPageContext pageContext;
     protected HttpServletResponse response;
+    protected ActionInvocation actionInvocation;
 
     protected Mock mockContainer;
 
@@ -78,6 +84,7 @@ public abstract class AbstractTagTest extends StrutsInternalTestCase {
 
     protected void createMocks() {
         action = this.getAction();
+        actionProxy = new MockActionProxy();
         container.inject(action);
 
         stack = ActionContext.getContext().getValueStack();
@@ -88,7 +95,7 @@ public abstract class AbstractTagTest extends StrutsInternalTestCase {
         request.setAttribute(ServletActionContext.STRUTS_VALUESTACK_KEY, stack);
         response = new StrutsMockHttpServletResponse();
         request.setSession(new StrutsMockHttpSession());
-        request.setupGetServletPath("/");
+        request.setServletPath("/");
 
         writer = new StringWriter();
 
@@ -97,14 +104,11 @@ public abstract class AbstractTagTest extends StrutsInternalTestCase {
         servletContext.setRealPath(new File("nosuchfile.properties").getAbsolutePath());
         servletContext.setServletInfo("Resin");
 
-        pageContext = new StrutsMockPageContext();
-        pageContext.setRequest(request);
-        pageContext.setResponse(response);
+        pageContext = new StrutsMockPageContext(servletContext, request, response);
         pageContext.setJspWriter(jspWriter);
-        pageContext.setServletContext(servletContext);
 
         mockContainer = new Mock(Container.class);
-        MockDispatcher du = new MockDispatcher(pageContext.getServletContext(), new HashMap<>(), configurationManager);
+        Dispatcher du = new Dispatcher(pageContext.getServletContext(), emptyMap());
         du.init();
         Dispatcher.setInstance(du);
         session = new SessionMap(request);
@@ -119,18 +123,40 @@ public abstract class AbstractTagTest extends StrutsInternalTestCase {
         extraContext = ActionContext.of(extraContext).withLocale(null).getContextMap();
         stack.getContext().putAll(extraContext);
 
-        ActionContext.of(context)
+        actionInvocation = new MockActionInvocation();
+        ((MockActionInvocation) actionInvocation).setAction(action);
+
+        ((MockActionProxy) actionProxy).setAction(action);
+        ((MockActionProxy) actionProxy).setInvocation(actionInvocation);
+        ((MockActionInvocation) actionInvocation).setProxy(actionProxy);
+
+        request.setRequestURI("/");
+        withRequestPath(request.getRequestURI());
+
+        ActionContext ac = ActionContext.of(context)
             .withServletRequest(request)
             .withServletResponse(response)
             .withServletContext(servletContext)
+            .withActionInvocation(actionInvocation)
             .bind();
+
+        ((MockActionInvocation) actionInvocation).setInvocationContext(ac);
+    }
+
+    protected void withRequestPath(String path) {
+        request.setRequestURI(path);
+        String namespace = path.substring(0, path.lastIndexOf('/'));
+        String actionName = path.substring(path.lastIndexOf('/') + 1);
+        if (namespace.equals("") && !actionName.contains(".action")) {
+            actionName = path;
+        }
+        ((MockActionProxy) actionProxy).setNamespace(namespace);
+        ((MockActionProxy) actionProxy).setActionName(actionName);
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        pageContext.verify();
-        request.verify();
         action = null;
         context = null;
         session = null;

@@ -22,10 +22,16 @@ import java.io.File;
 
 public class StrutsUploadedFile implements UploadedFile {
 
-    private File file;
+    private final File file;
+    private final String contentType;
+    private final String originalName;
+    private final String inputName;
 
-    public StrutsUploadedFile(File file) {
+    private StrutsUploadedFile(File file, String contentType, String originalName, String inputName) {
         this.file = file;
+        this.contentType = contentType;
+        this.originalName = originalName;
+        this.inputName = inputName;
     }
 
     @Override
@@ -56,5 +62,63 @@ public class StrutsUploadedFile implements UploadedFile {
     @Override
     public File getContent() {
         return file;
+    }
+
+    @Override
+    public String getContentType() {
+        return this.contentType;
+    }
+
+    @Override
+    public String getOriginalName() {
+        return originalName;
+    }
+
+    @Override
+    public String getInputName() {
+        return inputName;
+    }
+
+    @Override
+    public String toString() {
+        return "StrutsUploadedFile{" +
+            "contentType='" + contentType + '\'' +
+            ", originalName='" + originalName + '\'' +
+            ", inputName='" + inputName + '\'' +
+            '}';
+    }
+
+    public static class Builder {
+        private final File file;
+        private String contentType;
+        private String originalName;
+        private String inputName;
+
+        private Builder(File file) {
+            this.file = file;
+        }
+
+        public static Builder create(File file) {
+            return new Builder(file);
+        }
+
+        public Builder withContentType(String contentType) {
+            this.contentType = contentType;
+            return this;
+        }
+
+        public Builder withOriginalName(String originalName) {
+            this.originalName = originalName;
+            return this;
+        }
+
+        public Builder withInputName(String inputName) {
+            this.inputName = inputName;
+            return this;
+        }
+
+        public UploadedFile build() {
+            return new StrutsUploadedFile(this.file, this.contentType, this.originalName, this.inputName);
+        }
     }
 }

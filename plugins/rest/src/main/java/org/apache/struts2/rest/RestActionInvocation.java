@@ -18,22 +18,26 @@
  */
 package org.apache.struts2.rest;
 
-import com.opensymphony.xwork2.*;
-import com.opensymphony.xwork2.config.ConfigurationException;
-import com.opensymphony.xwork2.config.entities.ActionConfig;
-import com.opensymphony.xwork2.config.entities.ResultConfig;
-import com.opensymphony.xwork2.inject.Inject;
-import com.opensymphony.xwork2.interceptor.ValidationAware;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.struts2.action.Action;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.DefaultActionInvocation;
+import org.apache.struts2.ModelDriven;
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.result.HttpHeaderResult;
+import org.apache.struts2.config.ConfigurationException;
+import org.apache.struts2.config.entities.ActionConfig;
+import org.apache.struts2.config.entities.ResultConfig;
+import org.apache.struts2.inject.Inject;
+import org.apache.struts2.interceptor.ValidationAware;
 import org.apache.struts2.rest.handler.ContentTypeHandler;
 import org.apache.struts2.rest.handler.HtmlHandler;
+import org.apache.struts2.result.HttpHeaderResult;
+import org.apache.struts2.result.Result;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,7 +78,7 @@ public class RestActionInvocation extends DefaultActionInvocation {
     /**
      * If set to true (by default) blocks returning content from any other methods than GET,
      * if set to false, the content can be returned for any kind of method
-     * 
+     *
      * @param restrictToGet true or false
      */
     @Inject(value = RestConstants.REST_CONTENT_RESTRICT_TO_GET, required = false)

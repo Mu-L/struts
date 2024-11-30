@@ -18,15 +18,13 @@
  */
 package org.apache.struts2.views.util;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.util.ValueStack;
-import org.apache.struts2.StrutsConstants;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.util.ValueStack;
+import org.apache.struts2.dispatcher.DispatcherConstants;
 import org.apache.struts2.util.StrutsUtil;
-import org.apache.struts2.views.jsp.ui.OgnlTool;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,12 +32,11 @@ import java.util.Map;
  * Value Stack's Context related Utilities.
  */
 public class ContextUtil {
-    public static final String REQUEST = "request";
-    public static final String RESPONSE = "response";
-    public static final String SESSION = "session";
+    public static final String REQUEST = DispatcherConstants.REQUEST;
+    public static final String RESPONSE = DispatcherConstants.RESPONSE;
+    public static final String SESSION = DispatcherConstants.SESSION;
     public static final String BASE = "base";
     public static final String STACK = "stack";
-    public static final String OGNL = "ognl";
     public static final String STRUTS = "struts";
     public static final String ACTION = "action";
 
@@ -50,8 +47,8 @@ public class ContextUtil {
         map.put(SESSION, req.getSession(false));
         map.put(BASE, req.getContextPath());
         map.put(STACK, stack);
-        map.put(OGNL, stack.getActionContext().getContainer().getInstance(OgnlTool.class));
-        map.put(STRUTS, new StrutsUtil(stack, req, res));
+        StrutsUtil util = new StrutsUtil(stack, req, res);
+        map.put(STRUTS, util);
 
         ActionInvocation invocation = stack.getActionContext().getActionInvocation();
         if (invocation != null) {

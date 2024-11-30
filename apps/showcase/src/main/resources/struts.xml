@@ -20,8 +20,8 @@
  */
 -->
 <!DOCTYPE struts PUBLIC
-	"-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
-	"https://struts.apache.org/dtds/struts-2.5.dtd">
+	"-//Apache Software Foundation//DTD Struts Configuration 6.0//EN"
+	"https://struts.apache.org/dtds/struts-6.0.dtd">
 
 <!-- START SNIPPET: xworkSample -->
 <struts>
@@ -33,6 +33,17 @@
     <constant name="struts.configuration.xml.reload" value="false" />
     <constant name="struts.custom.i18n.resources" value="globalMessages" />
     <constant name="struts.action.extension" value="action,," />
+
+    <constant name="struts.allowlist.enable" value="true" />
+    <constant name="struts.parameters.requireAnnotations" value="true" />
+    <constant name="struts.allowlist.packageNames" value="
+            org.apache.struts2.showcase.model,
+            org.apache.struts2.showcase.modelDriven.model
+    "/>
+    <constant name="struts.allowlist.classes" value="
+            org.apache.struts2.showcase.hangman.Hangman,
+            org.apache.struts2.showcase.hangman.Vocab
+    "/>
 
     <constant name="struts.convention.package.locators.basePackage" value="org.apache.struts2.showcase" />
     <constant name="struts.convention.result.path" value="/WEB-INF" />
@@ -79,6 +90,8 @@
     <include file="struts-async.xml" />
 
     <include file="struts-dispatcher.xml" />
+
+    <include file="struts-params-annotation.xml" />
 
     <package name="default" extends="struts-default">
         <interceptors>

@@ -18,31 +18,40 @@
  */
 package org.apache.struts2.tiles;
 
-import com.opensymphony.xwork2.util.TextParseUtil;
+import org.apache.struts2.util.TextParseUtil;
+import jakarta.el.ArrayELResolver;
+import jakarta.el.BeanELResolver;
+import jakarta.el.CompositeELResolver;
+import jakarta.el.ELResolver;
+import jakarta.el.ListELResolver;
+import jakarta.el.MapELResolver;
+import jakarta.el.ResourceBundleELResolver;
+import jakarta.servlet.jsp.JspFactory;
 import ognl.OgnlException;
 import ognl.OgnlRuntime;
 import ognl.PropertyAccessor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tiles.TilesContainer;
-import org.apache.tiles.definition.DefinitionsFactory;
-import org.apache.tiles.definition.pattern.DefinitionPatternMatcherFactory;
-import org.apache.tiles.definition.pattern.PatternDefinitionResolver;
-import org.apache.tiles.definition.pattern.PrefixedPatternDefinitionResolver;
-import org.apache.tiles.definition.pattern.regexp.RegexpDefinitionPatternMatcherFactory;
-import org.apache.tiles.definition.pattern.wildcard.WildcardDefinitionPatternMatcherFactory;
+import org.apache.tiles.api.TilesContainer;
+import org.apache.tiles.core.definition.DefinitionsFactory;
+import org.apache.tiles.core.definition.pattern.DefinitionPatternMatcherFactory;
+import org.apache.tiles.core.definition.pattern.PatternDefinitionResolver;
+import org.apache.tiles.core.definition.pattern.PrefixedPatternDefinitionResolver;
+import org.apache.tiles.core.definition.pattern.regexp.RegexpDefinitionPatternMatcherFactory;
+import org.apache.tiles.core.definition.pattern.wildcard.WildcardDefinitionPatternMatcherFactory;
+import org.apache.tiles.core.evaluator.AttributeEvaluatorFactory;
+import org.apache.tiles.core.evaluator.BasicAttributeEvaluatorFactory;
+import org.apache.tiles.core.evaluator.impl.DirectAttributeEvaluator;
+import org.apache.tiles.core.factory.BasicTilesContainerFactory;
+import org.apache.tiles.core.factory.TilesContainerFactoryException;
+import org.apache.tiles.core.impl.mgmt.CachingTilesContainer;
+import org.apache.tiles.core.locale.LocaleResolver;
+import org.apache.tiles.core.prepare.factory.PreparerFactory;
 import org.apache.tiles.el.ELAttributeEvaluator;
 import org.apache.tiles.el.JspExpressionFactoryFactory;
 import org.apache.tiles.el.ScopeELResolver;
 import org.apache.tiles.el.TilesContextBeanELResolver;
 import org.apache.tiles.el.TilesContextELResolver;
-import org.apache.tiles.evaluator.AttributeEvaluatorFactory;
-import org.apache.tiles.evaluator.BasicAttributeEvaluatorFactory;
-import org.apache.tiles.evaluator.impl.DirectAttributeEvaluator;
-import org.apache.tiles.factory.BasicTilesContainerFactory;
-import org.apache.tiles.factory.TilesContainerFactoryException;
-import org.apache.tiles.impl.mgmt.CachingTilesContainer;
-import org.apache.tiles.locale.LocaleResolver;
 import org.apache.tiles.ognl.AnyScopePropertyAccessor;
 import org.apache.tiles.ognl.DelegatePropertyAccessor;
 import org.apache.tiles.ognl.NestedObjectDelegatePropertyAccessor;
@@ -51,7 +60,6 @@ import org.apache.tiles.ognl.PropertyAccessorDelegateFactory;
 import org.apache.tiles.ognl.ScopePropertyAccessor;
 import org.apache.tiles.ognl.TilesApplicationContextNestedObjectExtractor;
 import org.apache.tiles.ognl.TilesContextPropertyAccessorDelegateFactory;
-import org.apache.tiles.preparer.factory.PreparerFactory;
 import org.apache.tiles.request.ApplicationContext;
 import org.apache.tiles.request.ApplicationResource;
 import org.apache.tiles.request.Request;
@@ -59,14 +67,6 @@ import org.apache.tiles.request.render.BasicRendererFactory;
 import org.apache.tiles.request.render.ChainedDelegateRenderer;
 import org.apache.tiles.request.render.Renderer;
 
-import javax.el.ArrayELResolver;
-import javax.el.BeanELResolver;
-import javax.el.CompositeELResolver;
-import javax.el.ELResolver;
-import javax.el.ListELResolver;
-import javax.el.MapELResolver;
-import javax.el.ResourceBundleELResolver;
-import javax.servlet.jsp.JspFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -81,7 +81,7 @@ import java.util.Set;
  * - S2 ro access Struts' ValueStack
  * - OGNL
  * - EL
- *
+ * <p>
  * If you need additional features create your own listener and factory,
  * you can base on code from Tiles' CompleteAutoloadTilesContainerFactory
  */
@@ -103,7 +103,7 @@ public class StrutsTilesContainerFactory extends BasicTilesContainerFactory {
     /**
      * Default pattern to be used to collect Tiles definitions if user didn't configure any
      */
-    public static final String TILES_DEFAULT_PATTERN = "tiles*.xml";
+    public static final Set<String> TILES_DEFAULT_PATTERNS = TextParseUtil.commaDelimitedStringToSet("*tiles*.xml");
 
     /**
      * Supported expression languages
@@ -213,7 +213,7 @@ public class StrutsTilesContainerFactory extends BasicTilesContainerFactory {
         if (params.containsKey(DefinitionsFactory.DEFINITIONS_CONFIG)) {
             return TextParseUtil.commaDelimitedStringToSet(params.get(DefinitionsFactory.DEFINITIONS_CONFIG));
         }
-        return TextParseUtil.commaDelimitedStringToSet(TILES_DEFAULT_PATTERN);
+        return TILES_DEFAULT_PATTERNS;
     }
 
     protected ELAttributeEvaluator createELEvaluator(ApplicationContext applicationContext) {

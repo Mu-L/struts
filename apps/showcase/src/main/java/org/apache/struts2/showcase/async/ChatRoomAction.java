@@ -18,7 +18,8 @@
  */
 package org.apache.struts2.showcase.async;
 
-import com.opensymphony.xwork2.ActionSupport;
+import org.apache.struts2.ActionSupport;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +35,12 @@ public class ChatRoomAction extends ActionSupport {
 
     private static final List<String> messages = new ArrayList<>();
 
+    @StrutsParameter
     public void setMessage(String message) {
         this.message = message;
     }
 
+    @StrutsParameter
     public void setLastIndex(Integer lastIndex) {
         this.lastIndex = lastIndex;
     }
@@ -47,15 +50,12 @@ public class ChatRoomAction extends ActionSupport {
     }
 
     public Callable<String> receiveNewMessages() throws Exception {
-        return new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                while (lastIndex >= messages.size()) {
-                    Thread.sleep(3000);
-                }
-                newMessages = messages.subList(lastIndex, messages.size());
-                return SUCCESS;
+        return () -> {
+            while (lastIndex >= messages.size()) {
+                Thread.sleep(3000);
             }
+            newMessages = messages.subList(lastIndex, messages.size());
+            return SUCCESS;
         };
     }
 

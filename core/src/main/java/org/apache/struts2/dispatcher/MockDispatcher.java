@@ -18,10 +18,9 @@
  */
 package org.apache.struts2.dispatcher;
 
-import com.opensymphony.xwork2.config.ConfigurationManager;
+import org.apache.struts2.config.ConfigurationManager;
 
-import javax.servlet.ServletContext;
-import java.util.HashMap;
+import jakarta.servlet.ServletContext;
 import java.util.Map;
 
 public class MockDispatcher extends Dispatcher {

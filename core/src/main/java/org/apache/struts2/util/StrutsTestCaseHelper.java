@@ -18,29 +18,30 @@
  */
 package org.apache.struts2.util;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.inject.Container;
-import com.opensymphony.xwork2.util.ValueStack;
-import com.opensymphony.xwork2.util.ValueStackFactory;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.inject.Container;
+import org.apache.struts2.util.ValueStack;
+import org.apache.struts2.util.ValueStackFactory;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.apache.struts2.dispatcher.DispatcherErrorHandler;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.struts2.StrutsConstants.STRUTS_ALLOWLIST_ENABLE;
+
 /**
- * Generic test setup methods to be used with any unit testing framework. 
+ * Generic test setup methods to be used with any unit testing framework.
  */
 public class StrutsTestCaseHelper {
-    
-    public static Dispatcher initDispatcher(ServletContext ctx, Map<String,String> params) {
-        if (params == null) {
-            params = new HashMap<>();
-        }
-        Dispatcher du = new DispatcherWrapper(ctx, params);
+
+    public static Dispatcher initDispatcher(ServletContext ctx, Map<String, String> params) {
+        Map<String, String> finalParams = params != null ? new HashMap<>(params) : new HashMap<>();
+        finalParams.putIfAbsent(STRUTS_ALLOWLIST_ENABLE, "false");
+        Dispatcher du = new DispatcherWrapper(ctx, finalParams);
         du.init();
         Dispatcher.setInstance(du);
 
@@ -52,8 +53,16 @@ public class StrutsTestCaseHelper {
         return du;
     }
 
-    public static void tearDown() throws Exception {
-        Dispatcher.setInstance(null);
+    public static void tearDown(Dispatcher dispatcher) {
+        if (dispatcher != null && dispatcher.getConfigurationManager() != null) {
+            dispatcher.cleanup();
+        }
+        tearDown();
+    }
+
+    public static void tearDown() {
+        (new Dispatcher(null, null)).cleanUpAfterInit(); // Clear ContainerHolder
+        Dispatcher.clearInstance();
         ActionContext.clear();
     }
 

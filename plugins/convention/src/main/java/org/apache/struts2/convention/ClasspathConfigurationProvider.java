@@ -18,13 +18,13 @@
  */
 package org.apache.struts2.convention;
 
-import com.opensymphony.xwork2.config.Configuration;
-import com.opensymphony.xwork2.config.ConfigurationException;
-import com.opensymphony.xwork2.config.ConfigurationProvider;
-import com.opensymphony.xwork2.inject.Container;
-import com.opensymphony.xwork2.inject.ContainerBuilder;
-import com.opensymphony.xwork2.inject.Inject;
-import com.opensymphony.xwork2.util.location.LocatableProperties;
+import org.apache.struts2.config.Configuration;
+import org.apache.struts2.config.ConfigurationException;
+import org.apache.struts2.config.ConfigurationProvider;
+import org.apache.struts2.inject.Container;
+import org.apache.struts2.inject.ContainerBuilder;
+import org.apache.struts2.inject.Inject;
+import org.apache.struts2.util.location.LocatableProperties;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.struts2.StrutsConstants;
 import org.apache.struts2.dispatcher.Dispatcher;
@@ -36,7 +36,7 @@ import org.apache.struts2.dispatcher.DispatcherListener;
  * </p>
  */
 public class ClasspathConfigurationProvider implements ConfigurationProvider, DispatcherListener {
-    private ActionConfigBuilder actionConfigBuilder;
+    private final ActionConfigBuilder actionConfigBuilder;
     private boolean devMode;
     private boolean reload;
     private boolean listeningToDispatcher;
@@ -59,6 +59,7 @@ public class ClasspathConfigurationProvider implements ConfigurationProvider, Di
     /**
      * Not used.
      */
+    @Override
     public void destroy() {
         if (this.listeningToDispatcher) {
             Dispatcher.removeDispatcherListener(this);
@@ -71,6 +72,7 @@ public class ClasspathConfigurationProvider implements ConfigurationProvider, Di
      *
      * @param configuration configuration
      */
+    @Override
     public void init(Configuration configuration) {
         if (devMode && reload && !listeningToDispatcher) {
             //this is the only way I found to be able to get added to to ConfigurationProvider list
@@ -88,6 +90,7 @@ public class ClasspathConfigurationProvider implements ConfigurationProvider, Di
      *
      * @throws ConfigurationException in case of configuration errors
      */
+    @Override
     public void register(ContainerBuilder containerBuilder, LocatableProperties locatableProperties)
             throws ConfigurationException {
     }
@@ -97,20 +100,24 @@ public class ClasspathConfigurationProvider implements ConfigurationProvider, Di
      *
      * @throws ConfigurationException in case of configuration errors
      */
+    @Override
     public void loadPackages() throws ConfigurationException {
     }
 
     /**
      * @return true if devMode, reload and actionConfigBuilder.needsReload()
      */
+    @Override
     public boolean needsReload() {
         return devMode && reload && actionConfigBuilder.needsReload();
     }
 
+    @Override
     public void dispatcherInitialized(Dispatcher du) {
         du.getConfigurationManager().addContainerProvider(this);
     }
 
+    @Override
     public void dispatcherDestroyed(Dispatcher du) {
     }
 }

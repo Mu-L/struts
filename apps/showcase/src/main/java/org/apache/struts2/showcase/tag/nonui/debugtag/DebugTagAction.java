@@ -18,11 +18,12 @@
  */
 package org.apache.struts2.showcase.tag.nonui.debugtag;
 
-import com.opensymphony.xwork2.ActionSupport;
+import org.apache.struts2.ActionSupport;
 import org.apache.struts2.dispatcher.PrepareOperations;
 
 public class DebugTagAction extends ActionSupport {
 
+    @Override
     public String execute() throws Exception {
         PrepareOperations.overrideDevMode(true); // Just for Showcase, explicitly switch on for this action only
         return SUCCESS;

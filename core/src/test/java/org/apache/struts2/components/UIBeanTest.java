@@ -18,25 +18,41 @@
  */
 package org.apache.struts2.components;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.config.ConfigurationException;
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.config.ConfigurationException;
+import org.apache.struts2.util.ValueStack;
 import org.apache.struts2.StrutsInternalTestCase;
 import org.apache.struts2.components.template.Template;
 import org.apache.struts2.components.template.TemplateEngine;
 import org.apache.struts2.components.template.TemplateEngineManager;
+import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.dispatcher.StaticContentLoader;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
+import org.springframework.mock.web.MockHttpSession;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
-import static com.opensymphony.xwork2.security.DefaultNotExcludedAcceptedPatternsCheckerTest.NO_EXCLUSION_ACCEPT_ALL_PATTERNS_CHECKER;
+import static org.apache.struts2.security.DefaultNotExcludedAcceptedPatternsCheckerTest.NO_EXCLUSION_ACCEPT_ALL_PATTERNS_CHECKER;
 
 public class UIBeanTest extends StrutsInternalTestCase {
+
+    private UIBean bean;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        ValueStack stack = ActionContext.getContext().getValueStack();
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        MockHttpServletResponse res = new MockHttpServletResponse();
+        bean = new UIBean(stack, req, res) {
+            @Override
+            protected String getDefaultTemplate() {
+                return null;
+            }
+        };
+    }
 
     public void testPopulateComponentHtmlId1() {
         ValueStack stack = ActionContext.getContext().getValueStack();
@@ -44,14 +60,14 @@ public class UIBeanTest extends StrutsInternalTestCase {
         MockHttpServletResponse res = new MockHttpServletResponse();
 
         Form form = new Form(stack, req, res);
-        form.getParameters().put("id", "formId");
+        form.getAttributes().put("id", "formId");
 
         TextField txtFld = new TextField(stack, req, res);
         txtFld.setId("txtFldId");
 
         txtFld.populateComponentHtmlId(form);
 
-        assertEquals("txtFldId", txtFld.getParameters().get("id"));
+        assertEquals("txtFldId", txtFld.getAttributes().get("id"));
     }
 
     public void testPopulateComponentHtmlIdWithOgnl() {
@@ -60,14 +76,14 @@ public class UIBeanTest extends StrutsInternalTestCase {
         MockHttpServletResponse res = new MockHttpServletResponse();
 
         Form form = new Form(stack, req, res);
-        form.getParameters().put("id", "formId");
+        form.getAttributes().put("id", "formId");
 
         TextField txtFld = new TextField(stack, req, res);
         txtFld.setName("txtFldName%{'1'}");
 
         txtFld.populateComponentHtmlId(form);
 
-        assertEquals("formId_txtFldName1", txtFld.getParameters().get("id"));
+        assertEquals("formId_txtFldName1", txtFld.getAttributes().get("id"));
     }
 
     public void testPopulateComponentHtmlId2() {
@@ -76,14 +92,14 @@ public class UIBeanTest extends StrutsInternalTestCase {
         MockHttpServletResponse res = new MockHttpServletResponse();
 
         Form form = new Form(stack, req, res);
-        form.getParameters().put("id", "formId");
+        form.getAttributes().put("id", "formId");
 
         TextField txtFld = new TextField(stack, req, res);
         txtFld.setName("txtFldName");
 
         txtFld.populateComponentHtmlId(form);
 
-        assertEquals("formId_txtFldName", txtFld.getParameters().get("id"));
+        assertEquals("formId_txtFldName", txtFld.getAttributes().get("id"));
     }
 
     public void testPopulateComponentHtmlWithoutNameAndId() {
@@ -92,25 +108,16 @@ public class UIBeanTest extends StrutsInternalTestCase {
         MockHttpServletResponse res = new MockHttpServletResponse();
 
         Form form = new Form(stack, req, res);
-        form.getParameters().put("id", "formId");
+        form.getAttributes().put("id", "formId");
 
         TextField txtFld = new TextField(stack, req, res);
 
         txtFld.populateComponentHtmlId(form);
 
-        assertNull(txtFld.getParameters().get("id"));
+        assertNull(txtFld.getAttributes().get("id"));
     }
 
     public void testEscape() {
-        ValueStack stack = ActionContext.getContext().getValueStack();
-        MockHttpServletRequest req = new MockHttpServletRequest();
-        MockHttpServletResponse res = new MockHttpServletResponse();
-        UIBean bean = new UIBean(stack, req, res) {
-            protected String getDefaultTemplate() {
-                return null;
-            }
-        };
-
         assertEquals(bean.escape("hello[world"), "hello_world");
         assertEquals(bean.escape("hello.world"), "hello_world");
         assertEquals(bean.escape("hello]world"), "hello_world");
@@ -124,12 +131,12 @@ public class UIBeanTest extends StrutsInternalTestCase {
         MockHttpServletResponse res = new MockHttpServletResponse();
 
         Form form = new Form(stack, req, res);
-        form.getParameters().put("id", "formId");
+        form.getAttributes().put("id", "formId");
 
         TextField txtFld = new TextField(stack, req, res);
         txtFld.setName("foo/bar");
         txtFld.populateComponentHtmlId(form);
-        assertEquals("formId_foo_bar", txtFld.getParameters().get("id"));
+        assertEquals("formId_foo_bar", txtFld.getAttributes().get("id"));
     }
 
     public void testGetThemeFromForm() {
@@ -142,28 +149,6 @@ public class UIBeanTest extends StrutsInternalTestCase {
 
         TextField txtFld = new TextField(stack, req, res);
         assertEquals("foo", txtFld.getTheme());
-    }
-
-    public void testGetThemeFromContext() {
-        ValueStack stack = ActionContext.getContext().getValueStack();
-        MockHttpServletRequest req = new MockHttpServletRequest();
-        MockHttpServletResponse res = new MockHttpServletResponse();
-        Map<String, Object> context = Collections.singletonMap("theme", "bar");
-        ActionContext.getContext().put("attr", context);
-
-        TextField txtFld = new TextField(stack, req, res);
-        assertEquals("bar", txtFld.getTheme());
-    }
-
-    public void testGetThemeFromContextNonString() {
-        ValueStack stack = ActionContext.getContext().getValueStack();
-        MockHttpServletRequest req = new MockHttpServletRequest();
-        MockHttpServletResponse res = new MockHttpServletResponse();
-        Map<String, Object> context = Collections.singletonMap("theme", 12);
-        ActionContext.getContext().put("attr", context);
-
-        TextField txtFld = new TextField(stack, req, res);
-        assertEquals("12", txtFld.getTheme());
     }
 
     public void testMergeTemplateNullEngineException() {
@@ -183,7 +168,7 @@ public class UIBeanTest extends StrutsInternalTestCase {
         try {
             txtFld.mergeTemplate(null, new Template(null, null, null));
             fail("Exception not thrown");
-        } catch(final Exception e){
+        } catch (final Exception e) {
             assertTrue(e instanceof ConfigurationException);
         }
     }
@@ -221,21 +206,6 @@ public class UIBeanTest extends StrutsInternalTestCase {
         assertEquals(explicitTemplateDir, txtFld.getTemplateDir());
     }
 
-    public void testGetTemplateDirAttr() {
-        String attrTemplateDir = "attrTemplateDirectory";
-        String defaultTemplateDir = "defaultTemplateDirectory";
-        ValueStack stack = ActionContext.getContext().getValueStack();
-        MockHttpServletRequest req = new MockHttpServletRequest();
-        MockHttpServletResponse res = new MockHttpServletResponse();
-        Map<String, Object> context = Collections.singletonMap("templateDir", attrTemplateDir);
-        ActionContext.getContext().put("attr", context);
-
-        TextField txtFld = new TextField(stack, req, res);
-        txtFld.setDefaultTemplateDir(defaultTemplateDir);
-
-        assertEquals(attrTemplateDir, txtFld.getTemplateDir());
-    }
-
     public void testGetTemplateDirDefault() {
         String defaultTemplateDir = "defaultTemplateDirectory";
         ValueStack stack = ActionContext.getContext().getValueStack();
@@ -263,12 +233,13 @@ public class UIBeanTest extends StrutsInternalTestCase {
         ValueStack stack = ActionContext.getContext().getValueStack();
         MockHttpServletRequest req = new MockHttpServletRequest();
         MockHttpServletResponse res = new MockHttpServletResponse();
+        ActionContext.getContext().withServletRequest(req);
 
         TextField txtFld = new TextField(stack, req, res);
         txtFld.setAccesskey(accesskeyValue);
         txtFld.evaluateParams();
 
-        assertEquals(accesskeyValue, txtFld.getParameters().get("accesskey"));
+        assertEquals(accesskeyValue, txtFld.getAttributes().get("accesskey"));
     }
 
     public void testValueParameterEvaluation() {
@@ -276,23 +247,26 @@ public class UIBeanTest extends StrutsInternalTestCase {
         ValueStack stack = ActionContext.getContext().getValueStack();
         MockHttpServletRequest req = new MockHttpServletRequest();
         MockHttpServletResponse res = new MockHttpServletResponse();
+        ActionContext.getContext().withServletRequest(req);
 
         TextField txtFld = new TextField(stack, req, res);
         txtFld.addParameter("value", value);
         txtFld.evaluateParams();
 
-        assertEquals(value, txtFld.getParameters().get("nameValue"));
+        assertEquals(value, txtFld.getAttributes().get("nameValue"));
     }
 
     public void testValueParameterRecursion() {
         ValueStack stack = ActionContext.getContext().getValueStack();
         MockHttpServletRequest req = new MockHttpServletRequest();
         MockHttpServletResponse res = new MockHttpServletResponse();
+        ActionContext.getContext().withServletRequest(req);
 
         stack.push(new Object() {
             public String getMyValue() {
                 return "%{myBad}";
             }
+
             public String getMyBad() {
                 throw new IllegalStateException("Recursion detected!");
             }
@@ -303,19 +277,21 @@ public class UIBeanTest extends StrutsInternalTestCase {
         txtFld.setName("%{myValue}");
         txtFld.evaluateParams();
 
-        assertEquals("%{myBad}", txtFld.getParameters().get("nameValue"));
-        assertEquals("%{myBad}", txtFld.getParameters().get("name"));
+        assertEquals("%{myBad}", txtFld.getAttributes().get("nameValue"));
+        assertEquals("%{myBad}", txtFld.getAttributes().get("name"));
     }
 
     public void testValueNameParameterNotAccepted() {
         ValueStack stack = ActionContext.getContext().getValueStack();
         MockHttpServletRequest req = new MockHttpServletRequest();
         MockHttpServletResponse res = new MockHttpServletResponse();
+        ActionContext.getContext().withServletRequest(req);
 
         stack.push(new Object() {
             public String getMyValueName() {
                 return "getMyValue()";
             }
+
             public String getMyValue() {
                 return "value";
             }
@@ -325,19 +301,20 @@ public class UIBeanTest extends StrutsInternalTestCase {
         container.inject(txtFld);
         txtFld.setName("%{myValueName}");
         txtFld.evaluateParams();
-        assertEquals("getMyValue()", txtFld.getParameters().get("name"));
-        assertEquals("getMyValue()", txtFld.getParameters().get("nameValue"));
+        assertEquals("getMyValue()", txtFld.getAttributes().get("name"));
+        assertEquals("getMyValue()", txtFld.getAttributes().get("nameValue"));
 
         txtFld.setNotExcludedAcceptedPatterns(NO_EXCLUSION_ACCEPT_ALL_PATTERNS_CHECKER);
         txtFld.evaluateParams();
-        assertEquals("getMyValue()", txtFld.getParameters().get("name"));
-        assertEquals("value", txtFld.getParameters().get("nameValue"));
+        assertEquals("getMyValue()", txtFld.getAttributes().get("name"));
+        assertEquals("value", txtFld.getAttributes().get("nameValue"));
     }
 
     public void testValueNameParameterGetterAccepted() {
         ValueStack stack = ActionContext.getContext().getValueStack();
         MockHttpServletRequest req = new MockHttpServletRequest();
         MockHttpServletResponse res = new MockHttpServletResponse();
+        ActionContext.getContext().withServletRequest(req);
 
         stack.push(new Object() {
             public String getMyValue() {
@@ -349,8 +326,8 @@ public class UIBeanTest extends StrutsInternalTestCase {
         container.inject(txtFld);
         txtFld.setName("getMyValue()");
         txtFld.evaluateParams();
-        assertEquals("getMyValue()", txtFld.getParameters().get("name"));
-        assertEquals("value", txtFld.getParameters().get("nameValue"));
+        assertEquals("getMyValue()", txtFld.getAttributes().get("name"));
+        assertEquals("value", txtFld.getAttributes().get("nameValue"));
     }
 
     public void testSetClass() {
@@ -358,12 +335,13 @@ public class UIBeanTest extends StrutsInternalTestCase {
         ValueStack stack = ActionContext.getContext().getValueStack();
         MockHttpServletRequest req = new MockHttpServletRequest();
         MockHttpServletResponse res = new MockHttpServletResponse();
+        ActionContext.getContext().withServletRequest(req);
 
         TextField txtFld = new TextField(stack, req, res);
         txtFld.setCssClass(cssClass);
         txtFld.evaluateParams();
 
-        assertEquals(cssClass, txtFld.getParameters().get("cssClass"));
+        assertEquals(cssClass, txtFld.getAttributes().get("cssClass"));
     }
 
     public void testSetStyle() {
@@ -371,12 +349,13 @@ public class UIBeanTest extends StrutsInternalTestCase {
         ValueStack stack = ActionContext.getContext().getValueStack();
         MockHttpServletRequest req = new MockHttpServletRequest();
         MockHttpServletResponse res = new MockHttpServletResponse();
+        ActionContext.getContext().withServletRequest(req);
 
         TextField txtFld = new TextField(stack, req, res);
         txtFld.setStyle(cssStyle);
         txtFld.evaluateParams();
 
-        assertEquals(cssStyle, txtFld.getParameters().get("cssStyle"));
+        assertEquals(cssStyle, txtFld.getAttributes().get("cssStyle"));
     }
 
     public void testNonce() {
@@ -385,14 +364,37 @@ public class UIBeanTest extends StrutsInternalTestCase {
         MockHttpServletRequest req = new MockHttpServletRequest();
         MockHttpServletResponse res = new MockHttpServletResponse();
         ActionContext actionContext = stack.getActionContext();
-        Map<String, Object> session = new HashMap<>();
-        session.put("nonce", nonceVal);
-        actionContext.withSession(session);
+        actionContext.withServletRequest(req);
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("nonce", nonceVal);
+        req.setSession(session);
+
+        actionContext.withSession(new SessionMap(req));
 
         DoubleSelect dblSelect = new DoubleSelect(stack, req, res);
         dblSelect.evaluateParams();
 
-        assertEquals(nonceVal, dblSelect.getParameters().get("nonce"));
+        assertEquals(nonceVal, dblSelect.getAttributes().get("nonce"));
+    }
+
+    public void testNonceOfInvalidSession() {
+        String nonceVal = "r4nd0m";
+        ValueStack stack = ActionContext.getContext().getValueStack();
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        MockHttpServletResponse res = new MockHttpServletResponse();
+        ActionContext actionContext = stack.getActionContext();
+        actionContext.withServletRequest(req);
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("nonce", nonceVal);
+        req.setSession(session);
+        actionContext.withSession(new SessionMap(req));
+
+        session.invalidate();
+
+        DoubleSelect dblSelect = new DoubleSelect(stack, req, res);
+        dblSelect.evaluateParams();
+
+        assertNull(dblSelect.getAttributes().get("nonce"));
     }
 
     public void testSetNullUiStaticContentPath() {
@@ -427,6 +429,29 @@ public class UIBeanTest extends StrutsInternalTestCase {
         field.setStaticContentPath("/content/");
         // then
         assertEquals("/content", field.uiStaticContentPath);
+    }
+
+    /**
+     * The {@code name} attribute of a {@link UIBean} is evaluated to determine the {@value UIBean#ATTR_NAME_VALUE}
+     * parameter value. Thus, it is imperative that the {@code name} attribute is not derived from user input as it will
+     * otherwise result in a critical SSTI vulnerability.
+     * <p>
+     * When using FreeMarker, if the {@code name} attribute is a templating variable that corresponds to a getter which
+     * returns user-controlled input, it will usually resolve to {@code null} when loading the corresponding Action,
+     * which results in a rendering error, giving developers strong feedback that the attribute is not set correctly.
+     * <p>
+     * In the case of Velocity, templating variables which resolve to {@code null} do not cause rendering errors, making
+     * this potentially critical mistake sometimes undetectable. By logging a prominent warning, Velocity developers are
+     * also given a clear indication that the {@code name} attribute is not set correctly.
+     * <p>
+     * If the name attribute should definitely correspond to a variable (it is NOT derived from user input), the warning
+     * can be suppressed by using the Struts OGNL expression syntax instead ( %{expr} ). This may be appropriate when
+     * defining Struts components within an Iterator or loop.
+     */
+    public void testPotentialDoubleEvaluationWarning() {
+        bean.setName("${someVar}");
+
+        assertNull(bean.name);
     }
 
 }

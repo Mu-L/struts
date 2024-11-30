@@ -18,8 +18,8 @@
  */
 package org.apache.struts2.views.jsp.ui;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.mock.MockActionInvocation;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.mock.MockActionInvocation;
 import org.apache.struts2.TestAction;
 import org.apache.struts2.views.jsp.AbstractUITagTest;
 
@@ -136,7 +136,7 @@ public class HiddenTest extends AbstractUITagTest {
 
         MockActionInvocation ai = new MockActionInvocation();
         ai.setAction(action);
-        ActionContext.getContext().setActionInvocation(ai);
+        ActionContext.getContext().withActionInvocation(ai);
 
         HiddenTag tag = new HiddenTag();
         tag.setPageContext(pageContext);
@@ -167,7 +167,7 @@ public class HiddenTest extends AbstractUITagTest {
 
         MockActionInvocation ai = new MockActionInvocation();
         ai.setAction(action);
-        ActionContext.getContext().setActionInvocation(ai);
+        ActionContext.getContext().withActionInvocation(ai);
 
         HiddenTag tag = new HiddenTag();
         tag.setPerformClearTagStateForTagPoolingServers(true);  // Explicitly request tag state clearing.

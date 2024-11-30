@@ -19,23 +19,23 @@
 package org.apache.struts2.views.jsp;
 
 import com.mockobjects.dynamic.Mock;
-import com.opensymphony.xwork2.Action;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.ActionProxy;
-import com.opensymphony.xwork2.config.entities.ActionConfig;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.PageContext;
+import org.apache.struts2.action.Action;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.ActionProxy;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.StrutsException;
 import org.apache.struts2.TestAction;
 import org.apache.struts2.TestActionTagResult;
 import org.apache.struts2.TestConfigurationProvider;
 import org.apache.struts2.components.ActionComponent;
+import org.apache.struts2.config.entities.ActionConfig;
 import org.apache.struts2.dispatcher.HttpParameters;
 import org.apache.struts2.dispatcher.mapper.ActionMapper;
 import org.apache.struts2.dispatcher.mapper.DefaultActionMapper;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +45,7 @@ import java.util.Map;
 public class ActionTagTest extends AbstractTagTest {
 
     public void testActionTagWithNamespace() {
-        request.setupGetServletPath(TestConfigurationProvider.TEST_NAMESPACE + "/" + "foo.action");
+        withRequestPath(TestConfigurationProvider.TEST_NAMESPACE + "/" + "foo.action");
 
         ActionTag tag = new ActionTag();
         tag.setPageContext(pageContext);
@@ -72,11 +72,11 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testActionTagWithNamespace_clearTagStateSet() {
-        request.setupGetServletPath(TestConfigurationProvider.TEST_NAMESPACE + "/" + "foo.action");
+        withRequestPath(TestConfigurationProvider.TEST_NAMESPACE + "/" + "foo.action");
 
         ActionTag tag = new ActionTag();
         tag.setPerformClearTagStateForTagPoolingServers(true);  // Explicitly request tag state clearing.
@@ -106,11 +106,11 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testSimple() {
-        request.setupGetServletPath("/foo.action");
+        request.setServletPath("/foo.action");
 
         ActionConfig config = configuration.getRuntimeConfiguration().getActionConfig("", "testAction");
         container.inject(config.getInterceptors().get(0).getInterceptor());
@@ -145,12 +145,12 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
 
     }
 
     public void testSimple_clearTagStateSet() {
-        request.setupGetServletPath("/foo.action");
+        request.setServletPath("/foo.action");
 
         ActionConfig config = configuration.getRuntimeConfiguration().getActionConfig("", "testAction");
         container.inject(config.getInterceptors().get(0).getInterceptor());
@@ -188,7 +188,7 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
 
     }
 
@@ -199,7 +199,7 @@ public class ActionTagTest extends AbstractTagTest {
     }
 
     public void testSimpleWithActionMethodInOriginalURI() {
-        request.setupGetServletPath("/foo!foo.action");
+        request.setServletPath("/foo!foo.action");
 
         ActionConfig config = configuration.getRuntimeConfiguration().getActionConfig("", "testAction");
         container.inject(config.getInterceptors().get(0).getInterceptor());
@@ -234,12 +234,12 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
 
     }
 
     public void testSimpleWithctionMethodInOriginalURI_clearTagStateSet() {
-        request.setupGetServletPath("/foo!foo.action");
+        request.setServletPath("/foo!foo.action");
 
         ActionConfig config = configuration.getRuntimeConfiguration().getActionConfig("", "testAction");
         container.inject(config.getInterceptors().get(0).getInterceptor());
@@ -277,7 +277,7 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
 
     }
 
@@ -306,7 +306,7 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
 
     }
 
@@ -329,7 +329,7 @@ public class ActionTagTest extends AbstractTagTest {
         TestActionTagResult result = (TestActionTagResult) component.getProxy().getInvocation().getResult();
 
         assertTrue(stack.getContext().containsKey(ServletActionContext.PAGE_CONTEXT));
-        assertTrue(stack.getContext().get(ServletActionContext.PAGE_CONTEXT)instanceof PageContext);
+        assertTrue(stack.getContext().get(ServletActionContext.PAGE_CONTEXT) instanceof PageContext);
         assertTrue(result.isExecuted());
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
@@ -338,7 +338,7 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
 
     }
 
@@ -367,7 +367,7 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testActionWithoutExecuteResult_clearTagStateSet() throws Exception {
@@ -389,7 +389,7 @@ public class ActionTagTest extends AbstractTagTest {
         TestActionTagResult result = (TestActionTagResult) component.getProxy().getInvocation().getResult();
 
         assertTrue(stack.getContext().containsKey(ServletActionContext.PAGE_CONTEXT));
-        assertTrue(stack.getContext().get(ServletActionContext.PAGE_CONTEXT)instanceof PageContext);
+        assertTrue(stack.getContext().get(ServletActionContext.PAGE_CONTEXT) instanceof PageContext);
         assertNull(result); // result is never executed, hence never set into invocation
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
@@ -398,11 +398,12 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testExecuteButResetReturnSameInvocation() throws Exception {
         Mock mockActionInv = new Mock(ActionInvocation.class);
+        mockActionInv.matchAndReturn("invoke", "TEST");
         ActionTag tag = new ActionTag();
         tag.setPageContext(pageContext);
         tag.setNamespace("");
@@ -419,26 +420,27 @@ public class ActionTagTest extends AbstractTagTest {
         ActionComponent component = (ActionComponent) tag.getComponent();
 
         tag.doEndTag();
-        assertSame(oldInvocation, ActionContext.getContext().getActionInvocation());
+        assertEquals(oldInvocation.invoke(), ActionContext.getContext().getActionInvocation().invoke());
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         ActionTag freshTag = new ActionTag();
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
 
     }
 
-     public void testExecuteButResetReturnSameInvocation_clearTagStateSet() throws Exception {
+    public void testExecuteButResetReturnSameInvocation_clearTagStateSet() throws Exception {
         Mock mockActionInv = new Mock(ActionInvocation.class);
+        mockActionInv.matchAndReturn("invoke", "TEST");
         ActionTag tag = new ActionTag();
         tag.setPerformClearTagStateForTagPoolingServers(true);  // Explicitly request tag state clearing.
         tag.setPageContext(pageContext);
         tag.setNamespace("");
         tag.setName("testActionTagAction");
         tag.setExecuteResult(true);
-        ActionContext.getContext().setActionInvocation((ActionInvocation) mockActionInv.proxy());
+        ActionContext.getContext().withActionInvocation((ActionInvocation) mockActionInv.proxy());
 
         ActionInvocation oldInvocation = ActionContext.getContext().getActionInvocation();
         assertNotNull(oldInvocation);
@@ -450,7 +452,7 @@ public class ActionTagTest extends AbstractTagTest {
         ActionComponent component = (ActionComponent) tag.getComponent();
 
         tag.doEndTag();
-        assertTrue(oldInvocation == ActionContext.getContext().getActionInvocation());
+        assertEquals(oldInvocation.invoke(), ActionContext.getContext().getActionInvocation().invoke());
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
         ActionTag freshTag = new ActionTag();
@@ -458,7 +460,7 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testIngoreContextParamsFalse() throws Exception {
@@ -471,7 +473,7 @@ public class ActionTagTest extends AbstractTagTest {
 
         Map<String, String[]> params = new HashMap<>();
         params.put("user", new String[]{"Santa Claus"});
-        ActionContext.getContext().setParameters(HttpParameters.create(params).build());
+        ActionContext.getContext().withParameters(HttpParameters.create(params).build());
 
         tag.doStartTag();
 
@@ -490,7 +492,7 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
 
     }
 
@@ -505,7 +507,7 @@ public class ActionTagTest extends AbstractTagTest {
 
         Map<String, String[]> params = new HashMap<>();
         params.put("user", new String[]{"Santa Claus"});
-        ActionContext.getContext().setParameters(HttpParameters.create(params).build());
+        ActionContext.getContext().withParameters(HttpParameters.create(params).build());
 
         tag.doStartTag();
         setComponentTagClearTagState(tag, true);  // Ensure component tag state clearing is set true (to match tag).
@@ -526,7 +528,7 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
 
     }
 
@@ -540,7 +542,7 @@ public class ActionTagTest extends AbstractTagTest {
 
         Map<String, String[]> params = new HashMap<>();
         params.put("user", new String[]{"Santa Claus"});
-        ActionContext.getContext().setParameters(HttpParameters.create(params).build());
+        ActionContext.getContext().withParameters(HttpParameters.create(params).build());
 
         tag.doStartTag();
 
@@ -559,7 +561,7 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testIngoreContextParamsTrue_clearTagStateSet() throws Exception {
@@ -572,8 +574,8 @@ public class ActionTagTest extends AbstractTagTest {
         tag.setIgnoreContextParams(true);
 
         Map<String, String[]> params = new HashMap<>();
-        params.put("user", new String[] { "Santa Claus" });
-        ActionContext.getContext().setParameters(HttpParameters.create(params).build());
+        params.put("user", new String[]{"Santa Claus"});
+        ActionContext.getContext().withParameters(HttpParameters.create(params).build());
 
         tag.doStartTag();
         setComponentTagClearTagState(tag, true);  // Ensure component tag state clearing is set true (to match tag).
@@ -594,7 +596,7 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testNoNameDefined() throws Exception {
@@ -632,7 +634,7 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     // FIXME: Logging the error seems to cause the standard Maven build to fail
@@ -655,7 +657,7 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testActionMethodWithExecuteResult() throws Exception {
@@ -684,7 +686,7 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertFalse("Tag state after doEndTag() under default tag clear state is equal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     public void testActionMethodWithExecuteResult_clearTagStateSet() throws Exception {
@@ -694,7 +696,7 @@ public class ActionTagTest extends AbstractTagTest {
         tag.setNamespace("");
         tag.setName("testActionTagAction!input");
         tag.setExecuteResult(true);
-        ((DefaultActionMapper)container.getInstance(ActionMapper.class)).setAllowDynamicMethodCalls("true");
+        ((DefaultActionMapper) container.getInstance(ActionMapper.class)).setAllowDynamicMethodCalls("true");
 
         tag.doStartTag();
         setComponentTagClearTagState(tag, true);  // Ensure component tag state clearing is set true (to match tag).
@@ -707,7 +709,7 @@ public class ActionTagTest extends AbstractTagTest {
         TestActionTagResult result = (TestActionTagResult) component.getProxy().getInvocation().getResult();
 
         assertTrue(stack.getContext().containsKey(ServletActionContext.PAGE_CONTEXT));
-        assertTrue(stack.getContext().get(ServletActionContext.PAGE_CONTEXT)instanceof PageContext);
+        assertTrue(stack.getContext().get(ServletActionContext.PAGE_CONTEXT) instanceof PageContext);
         assertTrue(result.isExecuted());
 
         // Basic sanity check of clearTagStateForTagPoolingServers() behaviour for Struts Tags after doEndTag().
@@ -716,7 +718,7 @@ public class ActionTagTest extends AbstractTagTest {
         freshTag.setPageContext(pageContext);
         assertTrue("Tag state after doEndTag() and explicit tag state clearing is inequal to new Tag with pageContext/parent set.  " +
                 "May indicate that clearTagStateForTagPoolingServers() calls are not working properly.",
-                strutsBodyTagsAreReflectionEqual(tag, freshTag));
+            strutsBodyTagsAreReflectionEqual(tag, freshTag));
     }
 
     @Override

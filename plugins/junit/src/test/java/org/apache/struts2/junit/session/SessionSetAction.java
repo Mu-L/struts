@@ -18,8 +18,8 @@
  */
 package org.apache.struts2.junit.session;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionSupport;
 
 /**
  * An action which sets a value into the session
@@ -30,6 +30,7 @@ public class SessionSetAction extends ActionSupport {
     public String SESSION_KEY = "sessionKey";
     public String SESSION_VALUE = "sessionValue";
 
+    @Override
     public String execute() {
         ActionContext.getContext().getSession().put(SESSION_KEY, SESSION_VALUE);
         return ActionSupport.SUCCESS;

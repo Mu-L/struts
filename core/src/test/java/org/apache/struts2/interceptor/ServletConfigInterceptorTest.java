@@ -18,19 +18,20 @@
  */
 package org.apache.struts2.interceptor;
 
-import com.opensymphony.xwork2.Action;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.mock.MockActionInvocation;
+import org.apache.struts2.action.Action;
+import org.apache.struts2.ActionContext;
 import org.apache.struts2.StrutsInternalTestCase;
 import org.apache.struts2.StrutsStatics;
 import org.apache.struts2.action.ApplicationAware;
 import org.apache.struts2.action.ParametersAware;
 import org.apache.struts2.action.PrincipalAware;
+import org.apache.struts2.action.ServletContextAware;
 import org.apache.struts2.action.ServletRequestAware;
 import org.apache.struts2.action.ServletResponseAware;
 import org.apache.struts2.action.SessionAware;
 import org.apache.struts2.dispatcher.HttpParameters;
 import org.apache.struts2.interceptor.servlet.ServletPrincipalProxy;
+import org.apache.struts2.mock.MockActionInvocation;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -89,7 +90,7 @@ public class ServletConfigInterceptorTest extends StrutsInternalTestCase {
         MockActionInvocation mai = createActionInvocation(mock);
 
         HttpParameters params = HttpParameters.create().build();
-        mai.getInvocationContext().setParameters(params);
+        mai.getInvocationContext().withParameters(params);
 
         mock.withParameters(params);
         expectLastCall().times(1);
@@ -105,7 +106,7 @@ public class ServletConfigInterceptorTest extends StrutsInternalTestCase {
         MockActionInvocation mai = createActionInvocation(mock);
 
         Map<String, Object> session = new HashMap<String, Object>();
-        mai.getInvocationContext().setSession(session);
+        mai.getInvocationContext().withSession(session);
 
         mock.withSession(session);
         expectLastCall().times(1);
@@ -174,7 +175,7 @@ public class ServletConfigInterceptorTest extends StrutsInternalTestCase {
     }
 
     public void testActionServletContextAware() throws Exception {
-        org.apache.struts2.action.ServletContextAware mock = createMock(org.apache.struts2.action.ServletContextAware.class);
+        ServletContextAware mock = createMock(ServletContextAware.class);
 
         MockActionInvocation mai = createActionInvocation(mock);
 

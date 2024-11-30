@@ -18,7 +18,7 @@
  */
 package org.apache.struts2.url;
 
-import com.opensymphony.xwork2.inject.Inject;
+import org.apache.struts2.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,10 +27,13 @@ import org.apache.struts2.StrutsConstants;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.Collection;
 
 public class StrutsUrlDecoder implements UrlDecoder {
 
     private static final Logger LOG = LogManager.getLogger(StrutsUrlDecoder.class);
+
+    private static final Collection<Charset> AVAILABLE_CHARSETS = Charset.availableCharsets().values();
 
     private String encoding = "UTF-8";
 
@@ -107,7 +110,7 @@ public class StrutsUrlDecoder implements UrlDecoder {
     }
 
     private Charset getCharset(String encoding) throws UnsupportedEncodingException {
-        for (Charset charset : Charset.availableCharsets().values()) {
+        for (Charset charset : AVAILABLE_CHARSETS) {
             if (encoding.equalsIgnoreCase(charset.name())) {
                 return charset;
             }

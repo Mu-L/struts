@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.struts</groupId>
         <artifactId>struts2-plugins</artifactId>
-        <version>6.2.0-SNAPSHOT</version>
+        <version>7.0.0-M11-SNAPSHOT</version>
     </parent>
 
     <artifactId>struts2-velocity-plugin</artifactId>
@@ -40,28 +40,25 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.velocity.tools</groupId>
-            <artifactId>velocity-tools-view</artifactId>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-velocity-tools-view-jakarta</artifactId>
+            <optional>true</optional>
         </dependency>
-
         <dependency>
-            <groupId>org.apache.velocity.tools</groupId>
-            <artifactId>velocity-tools-view-jsp</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-velocity-tools-jsp-jakarta</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>mockobjects</groupId>
             <artifactId>mockobjects-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-junit-plugin</artifactId>
             <scope>test</scope>
         </dependency>
 

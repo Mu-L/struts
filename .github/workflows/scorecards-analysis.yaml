@@ -20,7 +20,8 @@ on:
   schedule:
     - cron: "30 1 * * 6"    # Weekly on Saturdays
   push:
-    branches: [ "master" ]
+    branches:
+      - master
 
 permissions: read-all
 
@@ -40,12 +41,12 @@ jobs:
     steps:
 
       - name: "Checkout code"
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8   # 3.1.0
+        uses: actions/checkout@v4   # 3.1.0
         with:
           persist-credentials: false
 
       - name: "Run analysis"
-        uses: ossf/scorecard-action@99c53751e09b9529366343771cc321ec74e9bd3d    # 2.0.6
+        uses: ossf/scorecard-action@62b2cac7ed8198b15735ed49ab1e5cf35480ba46    # 2.4.0
         with:
           results_file: results.sarif
           results_format: sarif
@@ -57,13 +58,13 @@ jobs:
           publish_results: true
 
       - name: "Upload artifact"
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8    # 3.1.0
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882    # 4.4.3
         with:
           name: SARIF file
           path: results.sarif
           retention-days: 5
 
       - name: "Upload to code-scanning"
-        uses: github/codeql-action/upload-sarif@b398f525a5587552e573b247ac661067fafa920b    # 2.1.22
+        uses: github/codeql-action/upload-sarif@3d3d628990a5f99229dd9fa1821cc5a4f31b613b    # 2.22.11
         with:
           sarif_file: results.sarif

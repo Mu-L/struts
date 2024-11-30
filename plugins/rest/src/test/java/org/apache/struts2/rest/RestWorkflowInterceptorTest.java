@@ -20,10 +20,10 @@ package org.apache.struts2.rest;
 
 import com.mockobjects.dynamic.AnyConstraintMatcher;
 import com.mockobjects.dynamic.Mock;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.ActionProxy;
-import com.opensymphony.xwork2.ActionSupport;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.ActionProxy;
+import org.apache.struts2.ActionSupport;
 import junit.framework.TestCase;
 import org.apache.struts2.dispatcher.mapper.ActionMapping;
 
@@ -51,7 +51,7 @@ public class RestWorkflowInterceptorTest extends TestCase {
         }, null);
         wf.setContentTypeHandlerManager((ContentTypeHandlerManager) mockContentTypeHandlerManager.proxy());
 
-        ActionContext.of(new HashMap<>())
+        ActionContext.of()
             .withActionMapping(new ActionMapping())
             .bind();
 

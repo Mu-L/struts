@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.struts</groupId>
         <artifactId>struts2-parent</artifactId>
-        <version>6.2.0-SNAPSHOT</version>
+        <version>7.0.0-M11-SNAPSHOT</version>
     </parent>
 
     <artifactId>struts2-assembly</artifactId>
@@ -41,9 +41,8 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>dependency-maven-plugin</artifactId>
-                <version>1.0</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>copy-war</id>
@@ -105,7 +104,9 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.7.1</version>
                 <executions>
                     <execution>
                         <id>make-assembly</id>
@@ -116,6 +117,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <skipAssembly>false</skipAssembly>
                     <descriptors>
                         <descriptor>src/main/assembly/all.xml</descriptor>
                         <descriptor>src/main/assembly/lib.xml</descriptor>
@@ -125,8 +127,8 @@
                         <descriptor>src/main/assembly/docs.xml</descriptor>
                     </descriptors>
                     <finalName>struts-${project.version}</finalName>
-                    <outputDirectory>target/assembly/out</outputDirectory>
-                    <workDirectory>target/assembly/work</workDirectory>
+                    <outputDirectory>${project.build.directory}/assembly/out</outputDirectory>
+                    <workDirectory>${project.build.directory}/assembly/work</workDirectory>
                 </configuration>
             </plugin>
         </plugins>
@@ -166,11 +168,6 @@
 
         <dependency>
             <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-dwr-plugin</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.struts</groupId>
             <artifactId>struts2-jasperreports-plugin</artifactId>
         </dependency>
 
@@ -186,32 +183,14 @@
 
         <dependency>
             <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-pell-multipart-plugin</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-plexus-plugin</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-portlet-plugin</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.struts</groupId>
             <artifactId>struts2-rest-plugin</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-sitemesh-plugin</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.struts</groupId>
             <artifactId>struts2-spring-plugin</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-testng-plugin</artifactId>
@@ -224,38 +203,7 @@
 
         <dependency>
             <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-oval-plugin</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.struts</groupId>
             <artifactId>struts2-json-plugin</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-embeddedjsp-plugin</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-gxp-plugin</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-osgi-plugin</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-osgi-admin-bundle</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-osgi-demo-bundle</artifactId>
-        </dependency>
-
     </dependencies>
 </project>

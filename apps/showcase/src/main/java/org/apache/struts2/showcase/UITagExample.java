@@ -20,13 +20,19 @@
  */
 package org.apache.struts2.showcase;
 
-import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.Validateable;
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.ActionSupport;
+import org.apache.struts2.Validateable;
+import org.apache.struts2.util.ValueStack;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  */
@@ -89,6 +95,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return leftSideCartoonCharacters;
 	}
 
+	@StrutsParameter
 	public void setLeftSideCartoonCharacters(List leftSideCartoonCharacters) {
 		this.leftSideCartoonCharacters = leftSideCartoonCharacters;
 	}
@@ -98,6 +105,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return rightSideCartoonCharacters;
 	}
 
+	@StrutsParameter
 	public void setRightSideCartoonCharacters(List rightSideCartoonCharacters) {
 		this.rightSideCartoonCharacters = rightSideCartoonCharacters;
 	}
@@ -107,6 +115,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return favouriteVehicalType;
 	}
 
+	@StrutsParameter
 	public void setFavouriteVehicalType(String favouriteVehicalType) {
 		this.favouriteVehicalType = favouriteVehicalType;
 	}
@@ -115,6 +124,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return favouriteVehicalSpecific;
 	}
 
+	@StrutsParameter
 	public void setFavouriteVehicalSpecific(String favouriteVehicalSpecific) {
 		this.favouriteVehicalSpecific = favouriteVehicalSpecific;
 	}
@@ -145,6 +155,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return name;
 	}
 
+	@StrutsParameter
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -153,6 +164,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return birthday;
 	}
 
+	@StrutsParameter
 	public void setBirthday(Date birthday) {
 		this.birthday = birthday;
 	}
@@ -161,6 +173,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return bio;
 	}
 
+	@StrutsParameter
 	public void setBio(String bio) {
 		this.bio = bio;
 	}
@@ -169,6 +182,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return favouriteColor;
 	}
 
+	@StrutsParameter
 	public void setFavouriteColor(String favoriteColor) {
 		this.favouriteColor = favoriteColor;
 	}
@@ -177,6 +191,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return friends;
 	}
 
+	@StrutsParameter
 	public void setFriends(List friends) {
 		this.friends = friends;
 	}
@@ -185,6 +200,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return bestFriend;
 	}
 
+	@StrutsParameter
 	public void setBestFriend(String bestFriend) {
 		this.bestFriend = bestFriend;
 	}
@@ -193,6 +209,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return legalAge;
 	}
 
+	@StrutsParameter
 	public void setLegalAge(boolean legalAge) {
 		this.legalAge = legalAge;
 	}
@@ -201,6 +218,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return state;
 	}
 
+	@StrutsParameter
 	public void setState(String state) {
 		this.state = state;
 	}
@@ -209,10 +227,12 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return region;
 	}
 
+	@StrutsParameter
 	public void setRegion(String region) {
 		this.region = region;
 	}
 
+	@StrutsParameter
 	public void setPicture(File picture) {
 		this.picture = picture;
 	}
@@ -221,14 +241,17 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return this.picture;
 	}
 
+	@StrutsParameter
 	public void setPictureContentType(String pictureContentType) {
 		this.pictureContentType = pictureContentType;
 	}
 
+	@StrutsParameter
 	public void setPictureFileName(String pictureFileName) {
 		this.pictureFileName = pictureFileName;
 	}
 
+	@StrutsParameter
 	public void setFavouriteLanguage(String favouriteLanguage) {
 		this.favouriteLanguage = favouriteLanguage;
 	}
@@ -237,7 +260,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return favouriteLanguage;
 	}
 
-
+	@StrutsParameter
 	public void setThoughts(String thoughts) {
 		this.thoughts = thoughts;
 	}
@@ -250,6 +273,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 		return wakeup;
 	}
 
+	@StrutsParameter
 	public void setWakeup(Date wakeup) {
 		this.wakeup = wakeup;
 	}
@@ -303,6 +327,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 			return this.description;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (!(obj instanceof VehicalType)) {
 				return false;
@@ -311,6 +336,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 			}
 		}
 
+		@Override
 		public int hashCode() {
 			return key.hashCode();
 		}
@@ -334,6 +360,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 			return this.description;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (!(obj instanceof VehicalSpecific)) {
 				return false;
@@ -342,6 +369,7 @@ public class UITagExample extends ActionSupport implements Validateable {
 			}
 		}
 
+		@Override
 		public int hashCode() {
 			return key.hashCode();
 		}

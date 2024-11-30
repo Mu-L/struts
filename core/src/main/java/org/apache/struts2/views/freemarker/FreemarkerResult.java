@@ -18,11 +18,11 @@
  */
 package org.apache.struts2.views.freemarker;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.LocaleProvider;
-import com.opensymphony.xwork2.inject.Inject;
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.locale.LocaleProvider;
+import org.apache.struts2.inject.Inject;
+import org.apache.struts2.util.ValueStack;
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
 import freemarker.template.Template;
@@ -30,18 +30,18 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.StrutsStatics;
 import org.apache.struts2.result.StrutsResultSupport;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.CharArrayWriter;
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Writer;
 import java.util.Locale;
 
@@ -50,6 +50,7 @@ import java.util.Locale;
  */
 public class FreemarkerResult extends StrutsResultSupport {
 
+    @Serial
     private static final long serialVersionUID = -3778230771704661631L;
 
     private static final Logger LOG = LogManager.getLogger(FreemarkerResult.class);
@@ -127,7 +128,7 @@ public class FreemarkerResult extends StrutsResultSupport {
             absoluteLocation = location;
         } else {
             String namespace = invocation.getProxy().getNamespace();
-            if (namespace == null || namespace.length() == 0 || namespace.equals("/")) {
+            if (namespace == null || namespace.isEmpty() || namespace.equals("/")) {
                 absoluteLocation = "/" + location;
             } else if (namespace.startsWith("/")) {
                 absoluteLocation = namespace + "/" + location;
@@ -207,7 +208,7 @@ public class FreemarkerResult extends StrutsResultSupport {
      * @throws TemplateException in case of freemarker configuration errors
      */
     protected Configuration getConfiguration() throws TemplateException {
-        return freemarkerManager.getConfiguration(ServletActionContext.getServletContext());
+        return freemarkerManager.getConfiguration(ActionContext.getContext().getServletContext());
     }
 
     /**
@@ -244,7 +245,7 @@ public class FreemarkerResult extends StrutsResultSupport {
         if (writer != null) {
             return writer;
         }
-        return ServletActionContext.getResponse().getWriter();
+        return ActionContext.getContext().getServletResponse().getWriter();
     }
 
     /**
@@ -261,7 +262,6 @@ public class FreemarkerResult extends StrutsResultSupport {
      * <li>request - the HttpServletRequst object for direct access
      * <li>response - the HttpServletResponse object for direct access
      * <li>stack - the OgnLValueStack instance for direct access
-     * <li>ognl - the instance of the OgnlTool
      * <li>action - the action itself
      * <li>exception - optional : the JSP or Servlet exception as per the servlet spec (for JSP Exception pages)
      * <li>struts - instance of the StrutsUtil class
@@ -271,9 +271,9 @@ public class FreemarkerResult extends StrutsResultSupport {
      * @throws TemplateModelException in case of errors during creating the model
      */
     protected TemplateModel createModel() throws TemplateModelException {
-        ServletContext servletContext = ServletActionContext.getServletContext();
-        HttpServletRequest request = ServletActionContext.getRequest();
-        HttpServletResponse response = ServletActionContext.getResponse();
+        ServletContext servletContext = ActionContext.getContext().getServletContext();
+        HttpServletRequest request = ActionContext.getContext().getServletRequest();
+        HttpServletResponse response = ActionContext.getContext().getServletResponse();
         ValueStack stack = ActionContext.getContext().getValueStack();
 
         Object action = null;
@@ -321,7 +321,7 @@ public class FreemarkerResult extends StrutsResultSupport {
     protected boolean preTemplateProcess(Template template, TemplateModel model) throws IOException {
         Object attrContentType = template.getCustomAttribute("content_type");
 
-        HttpServletResponse response = ServletActionContext.getResponse();
+        HttpServletResponse response = ActionContext.getContext().getServletResponse();
         if (response.getContentType() == null) {
             if (attrContentType != null) {
                 response.setContentType(attrContentType.toString());
@@ -349,7 +349,7 @@ public class FreemarkerResult extends StrutsResultSupport {
     }
 
     private boolean isInsideActionTag() {
-        Object attribute = ServletActionContext.getRequest().getAttribute(StrutsStatics.STRUTS_ACTION_TAG_INVOCATION);
+        Object attribute = ActionContext.getContext().getServletRequest().getAttribute(StrutsStatics.STRUTS_ACTION_TAG_INVOCATION);
         return (Boolean) ObjectUtils.defaultIfNull(attribute, Boolean.FALSE);
     }
 

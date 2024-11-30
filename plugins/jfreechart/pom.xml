@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.struts</groupId>
         <artifactId>struts2-plugins</artifactId>
-        <version>6.2.0-SNAPSHOT</version>
+        <version>7.0.0-M11-SNAPSHOT</version>
     </parent>
 
     <artifactId>struts2-jfreechart-plugin</artifactId>
@@ -47,7 +47,7 @@
         <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.5</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -60,11 +60,6 @@
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-junit-plugin</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.easymock</groupId>

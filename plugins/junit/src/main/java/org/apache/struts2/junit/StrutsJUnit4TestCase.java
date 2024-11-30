@@ -18,13 +18,17 @@
  */
 package org.apache.struts2.junit;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionProxy;
-import com.opensymphony.xwork2.ActionProxyFactory;
-import com.opensymphony.xwork2.config.Configuration;
-import com.opensymphony.xwork2.interceptor.ValidationAware;
-import com.opensymphony.xwork2.interceptor.annotations.After;
-import com.opensymphony.xwork2.interceptor.annotations.Before;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionProxy;
+import org.apache.struts2.ActionProxyFactory;
+import org.apache.struts2.config.Configuration;
+import org.apache.struts2.interceptor.ValidationAware;
+import org.apache.struts2.interceptor.annotations.After;
+import org.apache.struts2.interceptor.annotations.Before;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.Dispatcher;
@@ -39,10 +43,6 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockPageContext;
 import org.springframework.mock.web.MockServletContext;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -130,13 +130,13 @@ public abstract class StrutsJUnit4TestCase<T> extends XWorkJUnit4TestCase {
         ServletActionContext.setRequest(request);
         ServletActionContext.setResponse(response);
 
-        ServletActionContext.getContext().put(ServletActionContext.ACTION_MAPPING, mapping);
+        ServletActionContext.getActionContext().put(ServletActionContext.ACTION_MAPPING, mapping);
 
         return proxy;
     }
 
     protected void initActionContext(ActionContext actionContext) {
-        actionContext.setParameters(HttpParameters.create(request.getParameterMap()).build());
+        actionContext.withParameters(HttpParameters.create(request.getParameterMap()).build());
         initSession(actionContext);
         // set the action context to the one used by the proxy
         ActionContext.bind(actionContext);
@@ -203,9 +203,9 @@ public abstract class StrutsJUnit4TestCase<T> extends XWorkJUnit4TestCase {
      * Sets up the configuration settings, XWork configuration, and
      * message resources
      */
+    @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp();
         initServletMockObjects();
         setupBeforeInitDispatcher();
         initDispatcherParams();
@@ -239,14 +239,10 @@ public abstract class StrutsJUnit4TestCase<T> extends XWorkJUnit4TestCase {
         return null;
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
-        super.tearDown();
-        if (dispatcher != null && dispatcher.getConfigurationManager() != null) {
-            dispatcher.cleanup();
-            dispatcher = null;
-        }
-        StrutsTestCaseHelper.tearDown();
+        StrutsTestCaseHelper.tearDown(dispatcher);
     }
 
 }

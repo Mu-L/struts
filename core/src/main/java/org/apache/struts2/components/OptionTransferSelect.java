@@ -18,15 +18,15 @@
  */
 package org.apache.struts2.components;
 
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.util.ValueStack;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.views.annotations.StrutsTag;
 import org.apache.struts2.views.annotations.StrutsTagAttribute;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -137,7 +137,7 @@ public class OptionTransferSelect extends DoubleListUIBean {
     public void evaluateExtraParams() {
         super.evaluateExtraParams();
 
-        Object doubleValue = null;
+        Object doubleValue;
 
         // override DoubleListUIBean's
         if (doubleList != null) {
@@ -287,8 +287,8 @@ public class OptionTransferSelect extends DoubleListUIBean {
 
 
             // key -> select tag id, value -> headerKey (if exists)
-            Map formOptiontransferselectIds = (Map) formAncestor.getParameters().get("optiontransferselectIds");
-            Map formOptiontransferselectDoubleIds = (Map) formAncestor.getParameters().get("optiontransferselectDoubleIds");
+            Map formOptiontransferselectIds = (Map) formAncestor.getAttributes().get("optiontransferselectIds");
+            Map formOptiontransferselectDoubleIds = (Map) formAncestor.getAttributes().get("optiontransferselectDoubleIds");
 
             // init lists
             if (formOptiontransferselectIds == null) {
@@ -300,26 +300,26 @@ public class OptionTransferSelect extends DoubleListUIBean {
 
 
             // id
-            String tmpId = (String) getParameters().get("id");
-            String tmpHeaderKey = (String) getParameters().get("headerKey");
+            String tmpId = (String) getAttributes().get("id");
+            String tmpHeaderKey = (String) getAttributes().get("headerKey");
             if (tmpId != null && (! formOptiontransferselectIds.containsKey(tmpId))) {
                 formOptiontransferselectIds.put(tmpId, tmpHeaderKey);
             }
 
             // doubleId
-            String tmpDoubleId = (String) getParameters().get("doubleId");
-            String tmpDoubleHeaderKey = (String) getParameters().get("doubleHeaderKey");
+            String tmpDoubleId = (String) getAttributes().get("doubleId");
+            String tmpDoubleHeaderKey = (String) getAttributes().get("doubleHeaderKey");
             if (tmpDoubleId != null && (! formOptiontransferselectDoubleIds.containsKey(tmpDoubleId))) {
                 formOptiontransferselectDoubleIds.put(tmpDoubleId, tmpDoubleHeaderKey);
             }
 
-            formAncestor.getParameters().put("optiontransferselectIds", formOptiontransferselectIds);
-            formAncestor.getParameters().put("optiontransferselectDoubleIds", formOptiontransferselectDoubleIds);
+            formAncestor.getAttributes().put("optiontransferselectIds", formOptiontransferselectIds);
+            formAncestor.getAttributes().put("optiontransferselectDoubleIds", formOptiontransferselectDoubleIds);
 
         }
         else {
             if (LOG.isWarnEnabled()) {
-        	LOG.warn("form enclosing optiontransferselect "+this+" not found, auto select upon form submit of optiontransferselect will not work");
+                LOG.warn("form enclosing optiontransferselect {} not found, auto select upon form submit of optiontransferselect will not work", this);
             }
         }
     }

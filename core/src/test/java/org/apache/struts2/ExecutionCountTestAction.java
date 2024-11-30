@@ -18,7 +18,7 @@
  */
 package org.apache.struts2;
 
-import com.opensymphony.xwork2.ActionSupport;
+import org.apache.struts2.ActionSupport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,9 +41,10 @@ public class ExecutionCountTestAction extends ActionSupport {
         return executionCount;
     }
 
+    @Override
     public String execute() throws Exception {
         executionCount++;
-        LOG.info("executing ExecutionCountTestAction. Current count is " + executionCount);
+        LOG.info("executing ExecutionCountTestAction. Current count is {}", executionCount);
 
         return SUCCESS;
     }

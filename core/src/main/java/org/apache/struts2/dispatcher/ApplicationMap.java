@@ -18,27 +18,28 @@
  */
 package org.apache.struts2.dispatcher;
 
+import jakarta.servlet.ServletContext;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-
 /**
  * A simple implementation of the {@link java.util.Map} interface to handle a collection of attributes and
- * init parameters in a {@link javax.servlet.ServletContext} object. The {@link #entrySet()} method
+ * init parameters in a {@link jakarta.servlet.ServletContext} object. The {@link #entrySet()} method
  * enumerates over all servlet context attributes and init parameters and returns a collection of both.
  * Note, this will occur lazily - only when the entry set is asked for.
  */
 public class ApplicationMap extends AbstractMap<String, Object> implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 9136809763083228202L;
 
-    private ServletContext context;
+    private final ServletContext context;
     private Set<Entry<String, Object>> entries;
-
 
     /**
      * Creates a new map object given the servlet context.
@@ -117,12 +118,16 @@ public class ApplicationMap extends AbstractMap<String, Object> implements Seria
      * @param key the entry key.
      * @return the servlet context attribute or init parameter or <tt>null</tt> if the entry is not found.
      */
-    public Object get(final String key) {
+    @Override
+    public Object get(final Object key) {
+        if (key == null) {
+            return null;
+        }
         // Try context attributes first, then init params
         // This gives the proper shadowing effects
-        Object value = context.getAttribute(key);
+        Object value = context.getAttribute(key.toString());
 
-        return (value == null) ? context.getInitParameter(key) : value;
+        return (value == null) ? context.getInitParameter(key.toString()) : value;
     }
 
     /**
@@ -148,11 +153,16 @@ public class ApplicationMap extends AbstractMap<String, Object> implements Seria
      * @param key the attribute to remove.
      * @return the entry that was just removed.
      */
-    public Object remove(final String key) {
+    @Override
+    public Object remove(Object key) {
+        if (key == null) {
+            return null;
+        }
+
         entries = null;
 
         Object value = get(key);
-        context.removeAttribute(key);
+        context.removeAttribute(key.toString());
 
         return value;
     }

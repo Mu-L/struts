@@ -18,10 +18,10 @@
  */
 package org.apache.struts2.action;
 
-import com.opensymphony.xwork2.ActionSupport;
+import org.apache.struts2.ActionSupport;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 
@@ -42,7 +42,7 @@ import static org.apache.struts2.interceptor.csp.CspSettings.CSP_REPORT_TYPE;
  *     &lt;package name="csp-reports" namespace="/" extends="struts-default"&gt;
  *         &lt;action name="csp-reports" class="org.apache.struts2.action.DefaultCspReportAction"&gt;
  *             &lt;result type="httpheader"&gt;
- *                 &lt;param name="statusCode">200&lt;/param&gt;
+ *                 &lt;param name="status">204&lt;/param&gt;
  *             &lt;/result&gt;
  *         &lt;/action&gt;
  *     &lt;/package&gt;

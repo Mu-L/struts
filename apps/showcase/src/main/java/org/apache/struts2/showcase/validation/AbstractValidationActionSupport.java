@@ -20,7 +20,7 @@
  */
 package org.apache.struts2.showcase.validation;
 
-import com.opensymphony.xwork2.ActionSupport;
+import org.apache.struts2.ActionSupport;
 
 /**
  */
@@ -30,6 +30,7 @@ public abstract class AbstractValidationActionSupport extends ActionSupport {
 		return "success";
 	}
 
+	@Override
 	public String input() throws Exception {
 		return "input";
 	}

@@ -18,7 +18,7 @@
  */
 package org.apache.struts2;
 
-import com.opensymphony.xwork2.ActionSupport;
+import org.apache.struts2.ActionSupport;
 import org.apache.struts2.interceptor.httpmethod.AllowedHttpMethod;
 import org.apache.struts2.interceptor.httpmethod.HttpDelete;
 import org.apache.struts2.interceptor.httpmethod.HttpGet;
@@ -68,6 +68,7 @@ public class HttpMethodsTestAction extends ActionSupport implements HttpMethodAw
         return "onDelete";
     }
 
+    @Override
     public void setMethod(HttpMethod httpMethod) {
         this.httpMethod = httpMethod;
     }
@@ -76,6 +77,7 @@ public class HttpMethodsTestAction extends ActionSupport implements HttpMethodAw
         return httpMethod;
     }
 
+    @Override
     public String getBadRequestResultName() {
         return resultName;
     }

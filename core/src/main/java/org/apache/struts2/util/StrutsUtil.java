@@ -18,28 +18,36 @@
  */
 package org.apache.struts2.util;
 
-import com.opensymphony.xwork2.ObjectFactory;
-import com.opensymphony.xwork2.util.ClassLoaderUtil;
-import com.opensymphony.xwork2.util.TextParseUtil;
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.ObjectFactory;
+import org.apache.struts2.util.ClassLoaderUtil;
+import org.apache.struts2.util.TextParseUtil;
+import org.apache.struts2.util.ValueStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.StrutsException;
-import org.apache.struts2.views.jsp.ui.OgnlTool;
 import org.apache.struts2.views.util.UrlHelper;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.text.MessageFormat.format;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 /**
  * Struts base utility class, for use in Velocity and Freemarker templates
@@ -50,32 +58,28 @@ public class StrutsUtil {
 
     protected HttpServletRequest request;
     protected HttpServletResponse response;
-    protected Map<String, Class> classes = new Hashtable<>();
-    protected OgnlTool ognl;
+    protected Map<String, Class<?>> classes = new HashMap<>();
     protected ValueStack stack;
 
-    private UrlHelper urlHelper;
-    private ObjectFactory objectFactory;
+    private final UrlHelper urlHelper;
+    private final ObjectFactory objectFactory;
 
     public StrutsUtil(ValueStack stack, HttpServletRequest request, HttpServletResponse response) {
         this.stack = stack;
         this.request = request;
         this.response = response;
-        this.ognl = stack.getActionContext().getContainer().getInstance(OgnlTool.class);
         this.urlHelper = stack.getActionContext().getContainer().getInstance(UrlHelper.class);
         this.objectFactory = stack.getActionContext().getContainer().getInstance(ObjectFactory.class);
     }
 
-    public Object bean(Object aName) throws Exception {
-        String name = aName.toString();
-        Class c = classes.get(name);
-
-        if (c == null) {
-            c = ClassLoaderUtil.loadClass(name, StrutsUtil.class);
-            classes.put(name, c);
+    public Object bean(Object name) throws Exception {
+        String className = name.toString();
+        Class<?> clazz = classes.get(className);
+        if (clazz == null) {
+            clazz = ClassLoaderUtil.loadClass(className, StrutsUtil.class);
+            classes.put(className, clazz);
         }
-
-        return objectFactory.buildBean(c, stack.getContext());
+        return objectFactory.buildBean(clazz, stack.getContext());
     }
 
     public boolean isTrue(String expression) {
@@ -88,30 +92,20 @@ public class StrutsUtil {
     }
 
     public String include(Object aName) throws Exception {
-        try {
-            RequestDispatcher dispatcher = request.getRequestDispatcher(aName.toString());
-
-            if (dispatcher == null) {
-                throw new IllegalArgumentException("Cannot find included file " + aName);
-            }
-
-            ResponseWrapper responseWrapper = new ResponseWrapper(response);
-
-            dispatcher.include(request, responseWrapper);
-
-            return responseWrapper.getData();
+        RequestDispatcher dispatcher = request.getRequestDispatcher(aName.toString());
+        if (dispatcher == null) {
+            throw new IllegalArgumentException("Cannot find included file " + aName);
         }
-        catch (Exception e) {
-            LOG.debug("Cannot include {}", aName, e);
-            throw e;
-        }
+        ResponseWrapper responseWrapper = new ResponseWrapper(response);
+        dispatcher.include(request, responseWrapper);
+        return responseWrapper.getData();
     }
 
     public String urlEncode(String s) {
         try {
             return URLEncoder.encode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            LOG.debug("Cannot encode URL [{}]", s, e);
+            LOG.debug(format("Cannot encode URL [{0}]", s), e);
             return s;
         }
     }
@@ -124,6 +118,15 @@ public class StrutsUtil {
         return stack.findValue(expression, Class.forName(className));
     }
 
+    public Object findValue(String expr, Object context) {
+        stack.push(context);
+        try {
+            return stack.findValue(expr, true);
+        } finally {
+            stack.pop();
+        }
+    }
+
     public String getText(String text) {
         return (String) stack.findValue("getText('" + text.replace('\'', '"') + "')");
     }
@@ -132,7 +135,7 @@ public class StrutsUtil {
      * @return the url ContextPath. An empty string if one does not exist.
      */
     public String getContext() {
-        return (request == null)? "" : request.getContextPath();
+        return request == null ? "" : request.getContextPath();
     }
 
     public String translateVariables(String expression) {
@@ -156,56 +159,50 @@ public class StrutsUtil {
      *                     to use as the value of the ListEntry
      * @return a List of ListEntry
      */
-    public List makeSelectList(String selectedList, String list, String listKey, String listValue) {
-        List selectList = new ArrayList();
-
-        Collection selectedItems = null;
-
-        Object i = stack.findValue(selectedList);
-
-        if (i != null) {
-            if (i.getClass().isArray()) {
-                selectedItems = Arrays.asList((Object[]) i);
-            } else if (i instanceof Collection) {
-                selectedItems = (Collection) i;
-            } else {
-                // treat it is a single item
-                selectedItems = new ArrayList();
-                selectedItems.add(i);
-            }
-        }
+    public List<ListEntry> makeSelectList(String selectedList, String list, String listKey, String listValue) {
+        List<ListEntry> selectList = new ArrayList<>();
 
         Collection items = (Collection) stack.findValue(list);
+        if (items == null) {
+            return selectList;
+        }
 
-        if (items != null) {
-            for (Object element : items) {
-                Object key;
-
-                if ((listKey == null) || (listKey.length() == 0)) {
-                    key = element;
-                } else {
-                    key = ognl.findValue(listKey, element);
-                }
-
-                Object value = null;
-
-                if ((listValue == null) || (listValue.length() == 0)) {
-                    value = element;
-                } else {
-                    value = ognl.findValue(listValue, element);
-                }
-
-                boolean isSelected = false;
-
-                if ((value != null) && (selectedItems != null) && selectedItems.contains(value)) {
-                    isSelected = true;
-                }
-
-                selectList.add(new ListEntry(key, value, isSelected));
-            }
+        Collection selectedItems = getSelectedItems(selectedList);
+        for (Object element : items) {
+            Object key = computeKey(listKey, element);
+            Object value = computeValue(listValue, element);
+            boolean isSelected = value != null && selectedItems.contains(value);
+            selectList.add(new ListEntry(key, value, isSelected));
         }
 
         return selectList;
+    }
+
+    private Collection getSelectedItems(String selectedListName) {
+        Object i = stack.findValue(selectedListName);
+        if (i == null) {
+            return emptyList();
+        }
+        if (i.getClass().isArray()) {
+            return Arrays.asList((Object[]) i);
+        } else if (i instanceof Collection) {
+            return (Collection) i;
+        }
+        return singletonList(i);
+    }
+
+    private Object computeKey(String listKey, Object element) {
+        if (listKey == null || listKey.isEmpty()) {
+            return element;
+        }
+        return findValue(listKey, element);
+    }
+
+    private Object computeValue(String listValue, Object element) {
+        if (listValue == null || listValue.isEmpty()) {
+            return element;
+        }
+        return findValue(listValue, element);
     }
 
     public int toInt(long aLong) {
@@ -213,14 +210,13 @@ public class StrutsUtil {
     }
 
     public long toLong(int anInt) {
-        return (long) anInt;
+        return anInt;
     }
 
     public long toLong(String aLong) {
-        if (aLong == null) {
+        if (aLong == null || aLong.isEmpty()) {
             return 0;
         }
-
         return Long.parseLong(aLong);
     }
 
@@ -233,14 +229,7 @@ public class StrutsUtil {
     }
 
     public String toStringSafe(Object obj) {
-        try {
-            if (obj != null) {
-                return String.valueOf(obj);
-            }
-            return "";
-        } catch (Exception e) {
-            return "Exception thrown: " + e;
-        }
+        return obj == null ? "" : obj.toString();
     }
 
     static class ResponseWrapper extends HttpServletResponseWrapper {
@@ -257,7 +246,6 @@ public class StrutsUtil {
 
         public String getData() {
             writer.flush();
-
             return strout.toString();
         }
 

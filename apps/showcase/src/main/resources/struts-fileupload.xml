@@ -20,10 +20,13 @@
  */
 -->
 <!DOCTYPE struts PUBLIC
-	"-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
-	"https://struts.apache.org/dtds/struts-2.5.dtd">
+	"-//Apache Software Foundation//DTD Struts Configuration 6.0//EN"
+	"https://struts.apache.org/dtds/struts-6.0.dtd">
 
 <struts>
+
+	<constant name="struts.multipart.maxSize" value="10240" />
+
 	<package name="fileupload" extends="struts-default" namespace="/fileupload">
 
         <action name="upload" class="org.apache.struts2.showcase.fileupload.FileUploadAction" method="input">
@@ -40,7 +43,7 @@
 		</action>
 
 		<action name="doMultipleUploadUsingList" class="org.apache.struts2.showcase.fileupload.MultipleFileUploadUsingListAction" method="upload">
-                        <result name="input">/WEB-INF/fileupload/multipleUploadUsingList.jsp</result>
+			<result name="input">/WEB-INF/fileupload/multipleUploadUsingList.jsp</result>
 			<result>/WEB-INF/fileupload/multiple-success.jsp</result>
 		</action>
 
@@ -50,7 +53,7 @@
 		</action>
 
 		<action name="doMultipleUploadUsingArray" class="org.apache.struts2.showcase.fileupload.MultipleFileUploadUsingArrayAction" method="upload">
-                        <result name="input">/WEB-INF/fileupload/multipleUploadUsingArray.jsp</result>
+			<result name="input">/WEB-INF/fileupload/multipleUploadUsingArray.jsp</result>
 			<result>/WEB-INF/fileupload/multiple-success.jsp</result>
 		</action>
 

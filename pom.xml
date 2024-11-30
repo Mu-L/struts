@@ -19,18 +19,17 @@
  * under the License.
  */
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.apache.struts</groupId>
         <artifactId>struts-master</artifactId>
-        <version>14</version>
+        <version>15</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>struts2-parent</artifactId>
-    <version>6.2.0-SNAPSHOT</version>
+    <version>7.0.0-M11-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Struts 2</name>
     <url>https://struts.apache.org/</url>
@@ -83,9 +82,9 @@
 
     <modules>
         <module>bom</module>
+        <module>jakarta</module>
         <module>core</module>
         <module>plugins</module>
-        <module>bundles</module>
         <module>apps</module>
     </modules>
 
@@ -94,7 +93,7 @@
             <name>The Apache Software License, Version 2.0</name>
             <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
             <distribution>repo</distribution>
-            <comments/>
+            <comments />
         </license>
     </licenses>
 
@@ -105,23 +104,26 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.outputTimestamp>2022-11-15T14:30:13Z</project.build.outputTimestamp>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.outputTimestamp>2024-11-03T13:51:01Z</project.build.outputTimestamp>
+        <maven.compiler.release>17</maven.compiler.release>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
 
         <!-- dependency versions in alphanumeric order -->
-        <asm.version>9.2</asm.version>
-        <jackson.version>2.14.1</jackson.version>
-        <jackson-databind.version>2.14.1</jackson-databind.version>
-        <log4j2.version>2.19.0</log4j2.version>
-        <ognl.version>3.3.4</ognl.version>
-        <slf4j.version>1.7.32</slf4j.version>
-        <spring.platformVersion>5.3.26</spring.platformVersion>
+        <asm.version>9.7.1</asm.version>
+        <byte-buddy.version>1.14.11</byte-buddy.version>
+        <freemarker.version>2.3.33</freemarker.version>
+        <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
+        <jackson.version>2.18.2</jackson.version>
+        <log4j2.version>2.24.1</log4j2.version>
+        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+        <mockito.version>5.8.0</mockito.version>
+        <ognl.version>3.3.5</ognl.version>
+        <slf4j.version>2.0.16</slf4j.version>
+        <spring.platformVersion>6.0.13</spring.platformVersion>
         <tiles.version>3.0.8</tiles.version>
         <tiles-request.version>1.0.7</tiles-request.version>
-        <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
-        <hibernate-validator.version>6.2.4.Final</hibernate-validator.version>
-        <freemarker.version>2.3.32</freemarker.version>
+        <velocity-tools.version>3.1</velocity-tools.version>
 
         <!-- Site generation -->
         <fluido-skin.version>1.9</fluido-skin.version>
@@ -167,9 +169,9 @@
             </build>
         </profile>
         <profile>
-            <id>jdk8</id>
+            <id>jdk17</id>
             <activation>
-                <jdk>[1.8,)</jdk>
+                <jdk>[17,)</jdk>
             </activation>
             <build>
                 <pluginManagement>
@@ -181,27 +183,13 @@
                                 <doclint>none</doclint>
                             </configuration>
                         </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-        <profile>
-            <id>jdk17</id>
-            <activation>
-                <jdk>[17,)</jdk>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-surefire-plugin</artifactId>
                             <configuration>
                                 <argLine>
-                                    --illegal-access=permit
                                     --add-opens java.base/java.lang=ALL-UNNAMED
                                     --add-opens java.base/java.util=ALL-UNNAMED
-                                    -Dillegal-access=permit
                                     @{argLine}
                                 </argLine>
                             </configuration>
@@ -217,7 +205,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.8</version>
+                        <version>0.8.12</version>
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>
@@ -251,7 +239,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.8.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -283,29 +271,22 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.4.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>5.1.6</version>
+                    <version>5.1.9</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.8.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
+                    <version>3.3.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.rat</groupId>
@@ -317,10 +298,10 @@
                         <useDefaultExcludes>true</useDefaultExcludes>
                         <addDefaultLicenseMatchers>false</addDefaultLicenseMatchers>
                         <licenses>
-                            <licens implementation="org.apache.rat.analysis.license.ApacheSoftwareLicense20"/>
+                            <license implementation="org.apache.rat.analysis.license.ApacheSoftwareLicense20" />
                         </licenses>
                         <licenseFamilies>
-                            <licenseFamily implementation="org.apache.rat.license.Apache20LicenseFamily"/>
+                            <licenseFamily implementation="org.apache.rat.license.Apache20LicenseFamily" />
                         </licenseFamilies>
                         <includes>
                             <include>pom.xml</include>
@@ -350,7 +331,7 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>7.2.0</version>
+                    <version>10.0.4</version>
                     <configuration>
                         <suppressionFiles>
                             <suppressionFile>src/etc/project-suppression.xml</suppressionFile>
@@ -362,14 +343,21 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <configuration>
+                        <skipAssembly>true</skipAssembly>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.5.0</version>
                     <executions>
                         <execution>
                             <id>enforce</id>
                             <configuration>
                                 <rules>
-                                    <dependencyConvergence/>
+                                    <dependencyConvergence />
                                 </rules>
                             </configuration>
                             <goals>
@@ -381,7 +369,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-wrapper-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.3.2</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -390,8 +378,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <!-- See https://issues.apache.org/jira/browse/MRELEASE-1029 -->
-                <version>3.0.0-M1</version>
+                <version>3.1.1</version>
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -416,25 +403,21 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.9.0</version>
+                <version>3.20.0</version>
                 <configuration>
-                    <relativizeDecorationLinks>false</relativizeDecorationLinks>
+                    <relativizeSiteLinks>false</relativizeSiteLinks>
                 </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.maven.doxia</groupId>
                         <artifactId>doxia-core</artifactId>
-                        <version>1.9.1</version>
+                        <version>2.0.0</version>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.maven.doxia</groupId>
                         <artifactId>doxia-module-markdown</artifactId>
-                        <version>1.9.1</version>
+                        <version>1.12.0</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -449,11 +432,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-wrapper-plugin</artifactId>
-                <version>3.1.0</version>
             </plugin>
         </plugins>
 
@@ -506,7 +484,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.7</version>
+                <version>2.17.1</version>
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -551,26 +529,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-portlet-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-dwr-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-portlet-tiles-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-portlet-mocks-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-junit-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -582,11 +540,6 @@
             <dependency>
                 <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-tiles-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-osgi-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -611,22 +564,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-pell-multipart-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-plexus-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-rest-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-sitemesh-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -636,37 +574,12 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-oval-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-json-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-embeddedjsp-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-gxp-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-async-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-osgi-admin-bundle</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-osgi-demo-bundle</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -688,6 +601,19 @@
             </dependency>
 
             <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>3.1.8</version>
+            </dependency>
+
+            <!-- override version of error_prone_annotations until caffeine updates from 2.10.0 to 2.23.0 -->
+            <dependency>
+                <groupId>com.google.errorprone</groupId>
+                <artifactId>error_prone_annotations</artifactId>
+                <version>2.23.0</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.framework</artifactId>
                 <version>6.0.3</version>
@@ -698,7 +624,7 @@
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.main</artifactId>
-                <version>6.0.3</version>
+                <version>7.0.5</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
@@ -711,18 +637,6 @@
                 <version>1.4.1</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.directwebremoting</groupId>
-                <artifactId>dwr</artifactId>
-                <version>3.0.2-RELEASE</version>
-            </dependency>
-
-            <dependency>
-                <groupId>opensymphony</groupId>
-                <artifactId>sitemesh</artifactId>
-                <version>2.4.2</version>
-            </dependency>
-
             <!-- Velocity -->
             <dependency>
                 <groupId>org.apache.velocity</groupId>
@@ -731,15 +645,21 @@
             </dependency>
 
             <dependency>
-                <groupId>org.apache.velocity.tools</groupId>
-                <artifactId>velocity-tools-view</artifactId>
-                <version>3.1</version>
+                <groupId>org.apache.struts</groupId>
+                <artifactId>struts2-velocity-tools-view-jakarta</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.struts</groupId>
+                <artifactId>struts2-velocity-tools-jsp-jakarta</artifactId>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.velocity.tools</groupId>
-                <artifactId>velocity-tools-view-jsp</artifactId>
-                <version>3.1</version>
+                <artifactId>velocity-tools-generic</artifactId>
+                <version>${velocity-tools.version}</version>
             </dependency>
 
             <dependency>
@@ -762,10 +682,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-digester3</artifactId>
                 <version>3.2</version>
-                <optional>true</optional>
-                <!-- Prevent inclusion of ASM 3.3.1 via transitive dependency from velocity-tools-view/commons-digester3/cglib 2.2.2
-                     (its presence creates classpath conflicts / duplicate ASM jars due to ASM groupId changing after 3.x).  -->
                 <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
                     <exclusion>
                         <groupId>asm</groupId>
                         <artifactId>asm</artifactId>
@@ -776,117 +697,74 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.13.1</version>
+                <version>4.13.2</version>
             </dependency>
 
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
-                <version>4.2</version>
+                <version>5.4.0</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>3.1.0</version>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>4.2.2</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>6.0.0</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.glassfish</groupId>
-                <artifactId>javax.el</artifactId>
-                <version>3.0.1-b12</version>
+                <artifactId>jakarta.el</artifactId>
+                <version>5.0.0-M1</version>
             </dependency>
 
             <dependency>
-                <groupId>taglibs</groupId>
-                <artifactId>standard</artifactId>
-                <version>1.1.2</version>
+                <groupId>org.glassfish.web</groupId>
+                <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+                <version>3.0.1</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
-                <version>1.2</version>
+                <groupId>jakarta.servlet.jsp.jstl</groupId>
+                <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+                <version>3.0.0</version>
                 <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.el</groupId>
+                <artifactId>jakarta.el-api</artifactId>
+                <version>5.0.0</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jasper</artifactId>
-                <version>8.5.53</version>
+                <version>10.1.15</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-api</artifactId>
-                <version>8.5.53</version>
+                <version>10.1.15</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-api</artifactId>
-                <version>${tiles.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-core</artifactId>
-                <version>${tiles.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-servlet</artifactId>
-                <version>${tiles.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-request-portlet</artifactId>
-                <version>${tiles-request.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-request-api</artifactId>
-                <version>${tiles-request.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-request-jsp</artifactId>
-                <version>${tiles-request.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-request-servlet</artifactId>
-                <version>${tiles-request.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-jsp</artifactId>
-                <version>${tiles.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-freemarker</artifactId>
-                <version>${tiles.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-ognl</artifactId>
-                <version>${tiles.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-el</artifactId>
-                <version>${tiles.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.servlet.jsp</groupId>
-                <artifactId>jsp-api</artifactId>
-                <version>2.1</version>
+                <groupId>jakarta.servlet.jsp</groupId>
+                <artifactId>jakarta.servlet.jsp-api</artifactId>
+                <version>3.1.0</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -900,14 +778,14 @@
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-juli</artifactId>
-                <version>8.5.53</version>
+                <version>10.1.15</version>
             </dependency>
 
             <!-- Commons -->
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
-                <version>1.2</version>
+                <version>1.3.4</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -915,29 +793,24 @@
                 <version>4.4</version>
             </dependency>
             <dependency>
-                <groupId>commons-fileupload</groupId>
-                <artifactId>commons-fileupload</artifactId>
-                <version>1.5</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
+                <version>2.0.0-M2</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.9.0</version>
+                <version>2.15.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.10</version>
+                <version>3.17.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-text</artifactId>
-                <version>1.10.0</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-digester</groupId>
-                <artifactId>commons-digester</artifactId>
-                <version>2.1</version>
+                <version>1.12.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-el</groupId>
@@ -958,7 +831,7 @@
             <dependency>
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
-                <version>1.6</version>
+                <version>1.9.0</version>
             </dependency>
 
             <!-- Mocks for unit testing (by Spring) -->
@@ -1002,7 +875,6 @@
                 <artifactId>spring-web</artifactId>
                 <version>${spring.platformVersion}</version>
             </dependency>
-
             <dependency>
                 <groupId>mockobjects</groupId>
                 <artifactId>mockobjects-core</artifactId>
@@ -1010,27 +882,9 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>mockobjects</groupId>
-                <artifactId>mockobjects-jdk1.3</artifactId>
-                <version>0.09</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>mockobjects</groupId>
-                <artifactId>mockobjects-alt-jdk1.3</artifactId>
-                <version>0.09</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>mockobjects</groupId>
-                <artifactId>mockobjects-alt-jdk1.3-j2ee1.3</artifactId>
-                <version>0.09</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>mockobjects</groupId>
-                <artifactId>mockobjects-jdk1.3-j2ee1.3</artifactId>
-                <version>0.09</version>
+                <groupId>org.htmlunit</groupId>
+                <artifactId>htmlunit</artifactId>
+                <version>4.2.0</version>
                 <scope>test</scope>
             </dependency>
 
@@ -1044,23 +898,26 @@
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>3.15.0</version>
+                <version>3.26.3</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>4.3.1</version>
-                <exclusions>
-                    <!-- The mockito-core artifact and easymock artifact use different versions of objenesis (2.6 vs 3.1).
-                         Excluding the older version here to pass enforcer. When next upgrading mockito-core,
-                         confirm whether this exclusion is still required. -->
-                    <exclusion>
-                        <groupId>org.objenesis</groupId>
-                        <artifactId>objenesis</artifactId>
-                    </exclusion>
-                </exclusions>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>${byte-buddy.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy-agent</artifactId>
+                <version>${byte-buddy.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -1087,23 +944,37 @@
                 <artifactId>log4j-api</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-jcl</artifactId>
+                <version>${log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <version>${log4j2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.27.1</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>7.5</version><!-- the latest version supporting Java 1.8 -->
-            </dependency>
-
-            <dependency>
-                <groupId>net.sf.oval</groupId>
-                <artifactId>oval</artifactId>
-                <version>3.2.1</version>
+                <version>7.5.1</version><!-- the latest version supporting Java 1.8 -->
             </dependency>
 
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
-                <version>1.4.19</version>
+                <version>1.4.20</version>
                 <exclusions>
                     <exclusion>
                         <groupId>io.github.x-stream</groupId>
@@ -1118,27 +989,9 @@
                 <version>1.2.1</version>
             </dependency>
             <dependency>
-                <groupId>javax.persistence</groupId>
-                <artifactId>persistence-api</artifactId>
-                <version>1.0.2</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty</artifactId>
-                <version>6.1.26</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jsp-2.1</artifactId>
-                <version>6.1.26</version>
-            </dependency>
-
-            <!-- Portlet -->
-            <dependency>
-                <groupId>javax.portlet</groupId>
-                <artifactId>portlet-api</artifactId>
-                <version>2.0</version>
+                <groupId>jakarta.persistence</groupId>
+                <artifactId>jakarta.persistence-api</artifactId>
+                <version>3.1.0</version>
             </dependency>
 
             <dependency>
@@ -1149,20 +1002,12 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson-databind.version}</version>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-xml</artifactId>
                 <version>${jackson.version}</version>
-            </dependency>
-
-            <!-- FIXME: Workaround for jackson-dataformat-xml issue #340 of forgetting to update stax2-api  -->
-            <!-- https://github.com/FasterXML/jackson-dataformat-xml/issues/340 -->
-            <dependency>
-                <groupId>org.codehaus.woodstox</groupId>
-                <artifactId>stax2-api</artifactId>
-                <version>4.2</version>
             </dependency>
 
             <dependency>
@@ -1173,21 +1018,27 @@
 
             <!-- CDI & Weld -->
             <dependency>
-                <groupId>javax.enterprise</groupId>
-                <artifactId>cdi-api</artifactId>
-                <version>1.2</version>
+                <groupId>jakarta.enterprise</groupId>
+                <artifactId>jakarta.enterprise.cdi-api</artifactId>
+                <version>4.0.0</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jboss.weld</groupId>
-                <artifactId>weld-core</artifactId>
-                <version>2.4.8.Final</version>
+                <artifactId>weld-core-impl</artifactId>
+                <version>5.1.2.Final</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.annotation</groupId>
+                        <artifactId>jakarta.annotation-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
                 <groupId>org.jboss.weld.se</groupId>
-                <artifactId>weld-se</artifactId>
-                <version>2.4.8.Final</version>
+                <artifactId>weld-se-core</artifactId>
+                <version>5.1.2.Final</version>
             </dependency>
 
             <dependency>

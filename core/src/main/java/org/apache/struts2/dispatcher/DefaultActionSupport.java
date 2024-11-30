@@ -18,17 +18,19 @@
  */
 package org.apache.struts2.dispatcher;
 
-import javax.servlet.http.HttpServletRequest;
-
+import org.apache.struts2.ActionSupport;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
-import com.opensymphony.xwork2.ActionSupport;
+import java.io.Serial;
 
 /**
  * A simple action support class that sets properties to be able to serve
  */
 public class DefaultActionSupport extends ActionSupport {
 
+    @Serial
     private static final long serialVersionUID = -2426166391283746095L;
 
     private String successResultValue;
@@ -42,8 +44,9 @@ public class DefaultActionSupport extends ActionSupport {
     }
 
     /* (non-Javadoc)
-     * @see com.opensymphony.xwork2.ActionSupport#execute()
+     * @see org.apache.struts2.ActionSupport#execute()
      */
+    @Override
     public String execute() throws Exception {
         HttpServletRequest request = ServletActionContext.getRequest();
         String requestedUrl = request.getPathInfo();
@@ -61,9 +64,8 @@ public class DefaultActionSupport extends ActionSupport {
     /**
      * @param successResultValue The successResultValue to set.
      */
+    @StrutsParameter
     public void setSuccessResultValue(String successResultValue) {
         this.successResultValue = successResultValue;
     }
-
-
 }

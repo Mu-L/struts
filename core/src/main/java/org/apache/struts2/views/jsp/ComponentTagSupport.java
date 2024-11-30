@@ -18,19 +18,15 @@
  */
 package org.apache.struts2.views.jsp;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspException;
-
-import com.opensymphony.xwork2.ActionContext;
+import org.apache.struts2.inject.Container;
+import org.apache.struts2.util.ValueStack;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.JspException;
 import org.apache.struts2.components.Component;
 
-import com.opensymphony.xwork2.inject.Container;
-import com.opensymphony.xwork2.util.ValueStack;
-
-/**
- */
 public abstract class ComponentTagSupport extends StrutsBodyTagSupport {
+
     protected Component component;
 
     public abstract Component getBean(ValueStack stack, HttpServletRequest req, HttpServletResponse res);
@@ -39,8 +35,7 @@ public abstract class ComponentTagSupport extends StrutsBodyTagSupport {
     public int doEndTag() throws JspException {
         component.end(pageContext.getOut(), getBody());
         component = null;  // Always clear component reference (since clearTagStateForTagPoolingServers() is conditional).
-        clearTagStateForTagPoolingServers();
-        return EVAL_PAGE;
+        return super.doEndTag();
     }
 
     @Override
@@ -49,7 +44,7 @@ public abstract class ComponentTagSupport extends StrutsBodyTagSupport {
         component = getBean(stack, (HttpServletRequest) pageContext.getRequest(), (HttpServletResponse) pageContext.getResponse());
         Container container = stack.getActionContext().getContainer();
         container.inject(component);
-        
+
         populateParams();
         boolean evalBody = component.start(pageContext.getOut());
 
@@ -61,9 +56,9 @@ public abstract class ComponentTagSupport extends StrutsBodyTagSupport {
     }
 
     /**
-     * Define method to populate component state based on the Tag parameters.
-     * 
-     * Descendants should override this method for custom behaviour, but should <em>always</em> call the ancestor method when doing so.
+     * Define method to populate component state based on the Tag attributes.
+     * Descendants should override this method for custom behaviour,
+     * but should <em>always</em> call the ancestor method when doing so.
      */
     protected void populateParams() {
         populatePerformClearTagStateForTagPoolingServersParam();
@@ -71,7 +66,7 @@ public abstract class ComponentTagSupport extends StrutsBodyTagSupport {
 
     /**
      * Specialized method to populate the performClearTagStateForTagPoolingServers state of the Component to match the value set in the Tag.
-     * 
+     * <p>
      * Generally only unit tests would call this method directly, to avoid calling the whole populateParams() chain again after doStartTag()
      * has been called.  Doing that can break tag / component state behaviour, but unit tests still need a way to set the
      * performClearTagStateForTagPoolingServers state for the component (which only comes into being after doStartTag() is called).
@@ -88,7 +83,7 @@ public abstract class ComponentTagSupport extends StrutsBodyTagSupport {
 
     @Override
     protected void clearTagStateForTagPoolingServers() {
-       if (getPerformClearTagStateForTagPoolingServers() == false) {
+        if (!getPerformClearTagStateForTagPoolingServers()) {
             return;  // If flag is false (default setting), do not perform any state clearing.
         }
         super.clearTagStateForTagPoolingServers();

@@ -18,20 +18,21 @@
  */
 package org.apache.struts2.util;
 
-import com.mockobjects.dynamic.Mock;
-import com.mockobjects.servlet.MockPageContext;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.ActionProxy;
-import com.opensymphony.xwork2.util.ValueStack;
-import org.apache.struts2.StrutsInternalTestCase;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.struts2.StrutsInternalTestCase;
+import org.springframework.mock.web.MockPageContext;
+
+import com.mockobjects.dynamic.Mock;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.ActionProxy;
+import org.apache.struts2.util.ValueStack;
 
 
 /**
@@ -69,8 +70,9 @@ public class InvocationSessionStoreTest extends StrutsInternalTestCase {
         ActionContext actionContext = ActionContext.getContext();
         InvocationSessionStore.storeInvocation(INVOCATION_KEY, TOKEN_VALUE, invocation);
 
-        ActionContext actionContext2 = ActionContext.of(new HashMap<>()).bind();
-        actionContext2.setSession(session);
+        ActionContext actionContext2 = ActionContext.of()
+            .withSession(session)
+            .bind();
 
         assertEquals(actionContext2, ActionContext.getContext());
 
@@ -91,7 +93,7 @@ public class InvocationSessionStoreTest extends StrutsInternalTestCase {
         ByteArrayInputStream bais = new ByteArrayInputStream(b);
         ObjectInputStream ois = new ObjectInputStream(bais);
         session = (Map<String, Object>) ois.readObject();
-        ActionContext.getContext().setSession(session);
+        ActionContext.getContext().withSession(session);
         ois.close();
         bais.close();
 
@@ -116,7 +118,7 @@ public class InvocationSessionStoreTest extends StrutsInternalTestCase {
 
         InvocationSessionStore.storeInvocation(INVOCATION_KEY, TOKEN_VALUE, invocation);
 
-        ActionContext actionContext2 = ActionContext.of(new HashMap<>())
+        ActionContext actionContext2 = ActionContext.of()
             .withSession(session)
             .withPageContext(mockPreviousPageContext)
             .bind();

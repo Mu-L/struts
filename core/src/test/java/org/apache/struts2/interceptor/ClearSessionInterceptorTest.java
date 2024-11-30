@@ -23,8 +23,8 @@ import java.util.Map;
 
 import org.apache.struts2.StrutsInternalTestCase;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.mock.MockActionInvocation;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.mock.MockActionInvocation;
 
 /**
  * Test case for ClearSessionInterceptor.
@@ -34,15 +34,15 @@ public class ClearSessionInterceptorTest extends StrutsInternalTestCase {
     public void testCreateSession() throws Exception {
         ClearSessionInterceptor interceptor = new ClearSessionInterceptor();
         MockActionInvocation invocation = new MockActionInvocation();
-        ActionContext context = ActionContext.of(new HashMap<>()).bind();
+        ActionContext context = ActionContext.of().bind();
         Map<String, Object> session = new HashMap<>();
         session.put("Test1", "Test1");
         session.put("Test2", "Test2");
         session.put("Test3", "Test3");
-        context.setSession(session);
+        context.withSession(session);
         invocation.setInvocationContext(context);
         interceptor.intercept(invocation);
-        
+
         assertEquals(0, session.size());
     }
 }

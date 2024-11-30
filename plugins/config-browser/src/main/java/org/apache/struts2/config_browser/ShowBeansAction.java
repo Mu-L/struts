@@ -18,12 +18,12 @@
  */
 package org.apache.struts2.config_browser;
 
-import com.opensymphony.xwork2.ActionProxyFactory;
-import com.opensymphony.xwork2.ObjectFactory;
-import com.opensymphony.xwork2.conversion.ObjectTypeDeterminer;
-import com.opensymphony.xwork2.conversion.impl.XWorkConverter;
-import com.opensymphony.xwork2.inject.Container;
-import com.opensymphony.xwork2.inject.Inject;
+import org.apache.struts2.ActionProxyFactory;
+import org.apache.struts2.ObjectFactory;
+import org.apache.struts2.conversion.ObjectTypeDeterminer;
+import org.apache.struts2.conversion.impl.XWorkConverter;
+import org.apache.struts2.inject.Container;
+import org.apache.struts2.inject.Inject;
 import org.apache.struts2.StrutsConstants;
 import org.apache.struts2.components.UrlRenderer;
 import org.apache.struts2.dispatcher.mapper.ActionMapper;
@@ -46,6 +46,7 @@ public class ShowBeansAction extends ActionNamesAction {
     Map<String, Set<Binding>> bindings;
 
     @Inject
+    @Override
     public void setContainer(Container container) {
         super.setContainer(container);
         bindings = new TreeMap<>();
@@ -123,6 +124,7 @@ public class ShowBeansAction extends ActionNamesAction {
             return isDefault;
         }
 
+        @Override
         public int compareTo(Binding b2) {
             int ret;
             if (isDefault) {

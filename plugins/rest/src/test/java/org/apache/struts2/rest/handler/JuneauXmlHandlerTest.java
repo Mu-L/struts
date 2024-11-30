@@ -18,17 +18,16 @@
  */
 package org.apache.struts2.rest.handler;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.XWorkTestCase;
-import com.opensymphony.xwork2.mock.MockActionInvocation;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.XWorkTestCase;
+import org.apache.struts2.mock.MockActionInvocation;
 
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,7 +50,7 @@ public class JuneauXmlHandlerTest extends XWorkTestCase {
             "</object>";
         handler = new JuneauXmlHandler();
         ai = new MockActionInvocation();
-        ActionContext context = ActionContext.of(new HashMap<>()).withLocale(Locale.US);
+        ActionContext context = ActionContext.of().withLocale(Locale.US);
         ((MockActionInvocation) ai).setInvocationContext(context);
     }
 

@@ -18,15 +18,18 @@
  */
 package org.apache.struts2.views.freemarker;
 
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.util.ValueStack;
 import freemarker.template.ObjectWrapper;
 import freemarker.template.SimpleHash;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,13 +50,18 @@ import java.util.Map;
  */
 public class ScopesHashModel extends SimpleHash implements TemplateModel {
 
+    private static final Logger LOG = LogManager.getLogger(ScopesHashModel.class);
+
+    @Serial
     private static final long serialVersionUID = 5551686380141886764L;
 
-    private HttpServletRequest request;
-    private ServletContext servletContext;
+    private static final String TAG_ATTRIBUTES = "attributes";
+
+    private final HttpServletRequest request;
+    private final ServletContext servletContext;
     private ValueStack stack;
     private final Map<String, TemplateModel> unlistedModels = new HashMap<>();
-    private volatile Object parametersCache;
+    private volatile Object attributesCache;
 
     public ScopesHashModel(ObjectWrapper objectWrapper, ServletContext context, HttpServletRequest request, ValueStack stack) {
         super(objectWrapper);
@@ -94,6 +102,9 @@ public class ScopesHashModel extends SimpleHash implements TemplateModel {
 
             if (obj != null) {
                 return wrap(obj);
+            } else if (TAG_ATTRIBUTES.equals(key)) {
+                LOG.warn("[{}] cannot be resolved against stack, short-circuiting!", key);
+                return null;
             }
 
             // ok, then try the context
@@ -143,13 +154,13 @@ public class ScopesHashModel extends SimpleHash implements TemplateModel {
     }
 
     private Object findValueOnStack(final String key) {
-        if ("parameters".equals(key)) {
-            if (parametersCache != null) {
-                return parametersCache;
+        if (TAG_ATTRIBUTES.equals(key)) {
+            if (attributesCache != null) {
+                return attributesCache;
             }
-            Object parametersLocal = stack.findValue(key);
-            parametersCache = parametersLocal;
-            return parametersLocal;
+            Object attributesLocal = stack.findValue(key);
+            attributesCache = attributesLocal;
+            return attributesLocal;
         }
         return stack.findValue(key);
     }

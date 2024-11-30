@@ -18,14 +18,13 @@
  */
 package org.apache.struts2.components;
 
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.util.ValueStack;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.views.annotations.StrutsTag;
 import org.apache.struts2.views.annotations.StrutsTagAttribute;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * <!-- START SNIPPET: javadoc -->
@@ -68,13 +67,13 @@ public class File extends UIBean {
 
         Form form = (Form) findAncestor(Form.class);
         if (form != null) {
-            String encType = (String) form.getParameters().get("enctype");
+            String encType = (String) form.getAttributes().get("enctype");
             if (!"multipart/form-data".equals(encType)) {
                 // uh oh, this isn't good! Let's warn the developer
                 LOG.warn("Struts has detected a file upload UI tag (s:file) being used without a form set to enctype 'multipart/form-data'. This is probably an error!");
             }
 
-            String method = (String) form.getParameters().get("method");
+            String method = (String) form.getAttributes().get("method");
             if (!"post".equalsIgnoreCase(method)) {
                 // uh oh, this isn't good! Let's warn the developer
                 LOG.warn("Struts has detected a file upload UI tag (s:file) being used without a form set to method 'POST'. This is probably an error!");
@@ -95,8 +94,14 @@ public class File extends UIBean {
         this.accept = accept;
     }
 
-    @StrutsTagAttribute(description="HTML size attribute", required=false, type="Integer")
+    @StrutsTagAttribute(description="HTML size attribute", type="Integer")
     public void setSize(String size) {
         this.size = size;
+    }
+
+    @Override
+    @StrutsTagAttribute(description="Ignored during file upload")
+    public void setValue(String value) {
+        // ignores provided value
     }
 }

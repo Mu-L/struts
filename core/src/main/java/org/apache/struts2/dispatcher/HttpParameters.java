@@ -29,20 +29,22 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 @SuppressWarnings("unchecked")
-public class HttpParameters implements Map<String, Parameter>, Cloneable {
+public class HttpParameters implements Map<String, Parameter> {
 
     final private Map<String, Parameter> parameters;
 
     private HttpParameters(Map<String, Parameter> parameters) {
-        this.parameters = parameters;
+        this.parameters = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        this.parameters.putAll(parameters);
     }
 
+    @SuppressWarnings("rawtypes")
     public static Builder create(Map requestParameterMap) {
         return new Builder(requestParameterMap);
     }
 
     public static Builder create() {
-        return new Builder(new HashMap<>());
+        return new Builder(new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
     }
 
     public HttpParameters remove(Set<String> paramsToRemove) {
@@ -53,7 +55,7 @@ public class HttpParameters implements Map<String, Parameter>, Cloneable {
     }
 
     public HttpParameters remove(final String paramToRemove) {
-        return remove(new HashSet<String>() {{
+        return remove(new HashSet<>() {{
             add(paramToRemove);
         }});
     }
@@ -63,16 +65,11 @@ public class HttpParameters implements Map<String, Parameter>, Cloneable {
     }
 
     /**
-     * Access to this method can be potentially dangerous as it allows access to raw parameter values.
+     * Appends all the parameters by overriding any existing params in a case-insensitive manner
+     *
+     * @param newParams A new params to append
+     * @return a current instance of {@link HttpParameters}
      */
-    private Map<String, String[]> toMap() {
-        final Map<String, String[]> result = new HashMap<>(parameters.size());
-        for (Map.Entry<String, Parameter> entry : parameters.entrySet()) {
-            result.put(entry.getKey(), entry.getValue().getMultipleValues());
-        }
-        return result;
-    }
-
     public HttpParameters appendAll(Map<String, Parameter> newParams) {
         parameters.putAll(newParams);
         return this;
@@ -100,11 +97,11 @@ public class HttpParameters implements Map<String, Parameter>, Cloneable {
 
     @Override
     public Parameter get(Object key) {
-        if (parameters.containsKey(key)) {
-            return parameters.get(key);
-        } else {
-            return new Parameter.Empty(String.valueOf(key));
+        if (key == null) {
+            return new Parameter.Empty("null");
         }
+        Parameter val = parameters.get(key.toString());
+        return val != null ? val : new Parameter.Empty(key.toString());
     }
 
     @Override
@@ -176,43 +173,9 @@ public class HttpParameters implements Map<String, Parameter>, Cloneable {
         }
 
         public HttpParameters build() {
-            Map<String, Parameter> parameters = (parent == null)
-                    ? new HashMap<>()
-                    : new HashMap<>(parent.parameters);
-
-            for (Map.Entry<String, Object> entry : requestParameterMap.entrySet()) {
-                String name = entry.getKey();
-                Object value = entry.getValue();
-                if (value instanceof Parameter) {
-                    parameters.put(name, (Parameter) value);
-                } else {
-                    parameters.put(name, new Parameter.Request(name, value));
-                }
-            }
-
-            return new HttpParameters(parameters);
-        }
-
-        /**
-        * Alternate Builder method which avoids wrapping any parameters that are already
-        * a {@link Parameter} element within another {@link Parameter} wrapper.
-        *
-        * @return 
-         */
-        public HttpParameters buildNoNestedWrapping() {
-            Map<String, Parameter> parameters = (parent == null)
-                    ? new HashMap<>()
-                    : new HashMap<>(parent.parameters);
-
-            for (Map.Entry<String, Object> entry : requestParameterMap.entrySet()) {
-                String name = entry.getKey();
-                Object value = entry.getValue();
-                Parameter parameterValue = (value instanceof Parameter)
-                        ? (Parameter) value
-                        : new Parameter.Request(name, value);
-                parameters.put(name, parameterValue);
-            }
-
+            Map<String, Parameter> parameters = parent == null ? new HashMap<>() : new HashMap<>(parent.parameters);
+            requestParameterMap.forEach((name, value) ->
+                    parameters.put(name,value instanceof Parameter ? (Parameter) value : new Parameter.Request(name, value)));
             return new HttpParameters(parameters);
         }
     }

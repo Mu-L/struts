@@ -18,11 +18,12 @@
  */
 package org.apache.struts2.components;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.config.entities.ActionConfig;
-import com.opensymphony.xwork2.inject.Inject;
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.config.entities.ActionConfig;
+import org.apache.struts2.inject.Inject;
+import org.apache.struts2.util.ValueStack;
+import jakarta.servlet.RequestDispatcher;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -103,9 +104,9 @@ public class ServletUrlRenderer implements UrlRenderer {
             }
             result = urlHelper.buildUrl(_value, urlComponent.getHttpServletRequest(), urlComponent.getHttpServletResponse(), urlComponent.getParameters(), scheme, urlComponent.isIncludeContext(), urlComponent.isEncode(), urlComponent.isForceAddSchemeHostAndPort(), urlComponent.isEscapeAmp());
         }
-        String anchor = urlComponent.getAnchor();
-        if (StringUtils.isNotEmpty(anchor)) {
-            result += '#' + urlComponent.findString(anchor);
+        if (StringUtils.isNotEmpty(urlComponent.getAnchor())) {
+            String anchor = urlComponent.findString(urlComponent.getAnchor());
+            result += '#' + anchor;
         }
 
         if (urlComponent.isPutInContext()) {
@@ -159,10 +160,10 @@ public class ServletUrlRenderer implements UrlRenderer {
             }
         }
 
-        Map<String, Object> actionParams = null;
+        QueryStringParser.Result queryStringResult = queryStringParser.empty();
         if (action != null && action.indexOf('?') > 0) {
             String queryString = action.substring(action.indexOf('?') + 1);
-            actionParams = queryStringParser.parse(queryString, false);
+            queryStringResult = queryStringParser.parse(queryString);
             action = action.substring(0, action.indexOf('?'));
         }
 
@@ -174,9 +175,9 @@ public class ServletUrlRenderer implements UrlRenderer {
             namespace, actionName);
         if (actionConfig != null) {
 
-            ActionMapping mapping = new ActionMapping(actionName, namespace, actionMethod, formComponent.parameters);
+            ActionMapping mapping = new ActionMapping(actionName, namespace, actionMethod, formComponent.attributes);
             String result = urlHelper.buildUrl(formComponent.actionMapper.getUriFromActionMapping(mapping),
-                formComponent.request, formComponent.response, actionParams, scheme, formComponent.includeContext, true, false, false);
+                formComponent.request, formComponent.response, queryStringResult.getQueryParams(), scheme, formComponent.includeContext, true, false, false);
             formComponent.addParameter("action", result);
 
             // let's try to get the actual action class and name
@@ -213,7 +214,7 @@ public class ServletUrlRenderer implements UrlRenderer {
                 LOG.warn("No configuration found for the specified action: '{}' in namespace: '{}'. Form action defaulting to 'action' attribute's literal value.", actionName, namespace);
             }
 
-            String result = urlHelper.buildUrl(action, formComponent.request, formComponent.response, actionParams, scheme, formComponent.includeContext, true);
+            String result = urlHelper.buildUrl(action, formComponent.request, formComponent.response, queryStringResult.getQueryParams(), scheme, formComponent.includeContext, true);
             formComponent.addParameter("action", result);
 
             // namespace: cut out anything between the start and the last /
@@ -291,14 +292,18 @@ public class ServletUrlRenderer implements UrlRenderer {
 
     private void includeGetParameters(UrlProvider urlComponent) {
         String query = extractQueryString(urlComponent);
-        mergeRequestParameters(urlComponent.getValue(), urlComponent.getParameters(), queryStringParser.parse(query, false));
+        QueryStringParser.Result result = queryStringParser.parse(query);
+        result = mergeRequestParameters(urlComponent.getValue(), urlComponent.getParameters(), result.getQueryParams());
+        if (!result.getQueryFragment().isEmpty()) {
+            urlComponent.setAnchor(result.getQueryFragment());
+        }
     }
 
     private String extractQueryString(UrlProvider urlComponent) {
         // Parse the query string to make sure that the parameters come from the query, and not some posted data
         String query = urlComponent.getHttpServletRequest().getQueryString();
         if (query == null) {
-            query = (String) urlComponent.getHttpServletRequest().getAttribute("javax.servlet.forward.query_string");
+            query = (String) urlComponent.getHttpServletRequest().getAttribute(RequestDispatcher.FORWARD_QUERY_STRING);
         }
 
         if (query != null) {
@@ -327,10 +332,11 @@ public class ServletUrlRenderer implements UrlRenderer {
      * @param value             the value attribute (URL to be generated by this component)
      * @param parameters        component parameters
      * @param contextParameters request parameters
+     * @return {@link QueryStringParser.Result} of value's ?query-string or empty()
      */
-    protected void mergeRequestParameters(String value, Map<String, Object> parameters, Map<String, ?> contextParameters) {
-
+    protected QueryStringParser.Result mergeRequestParameters(String value, Map<String, Object> parameters, Map<String, ?> contextParameters) {
         Map<String, Object> mergedParams = new LinkedHashMap<>(contextParameters);
+        QueryStringParser.Result result = queryStringParser.empty();
 
         // Merge contextParameters (from current request) with parameters specified in value attribute
         // eg. value="someAction.action?id=someId&venue=someVenue"
@@ -339,7 +345,8 @@ public class ServletUrlRenderer implements UrlRenderer {
         if (StringUtils.contains(value, "?")) {
             String queryString = value.substring(value.indexOf('?') + 1);
 
-            mergedParams = queryStringParser.parse(queryString, false);
+            result = queryStringParser.parse(queryString);
+            mergedParams = new LinkedHashMap<>(result.getQueryParams());
             for (Map.Entry<String, ?> entry : contextParameters.entrySet()) {
                 if (!mergedParams.containsKey(entry.getKey())) {
                     mergedParams.put(entry.getKey(), entry.getValue());
@@ -358,6 +365,8 @@ public class ServletUrlRenderer implements UrlRenderer {
                 parameters.put(entry.getKey(), entry.getValue());
             }
         }
+
+        return result;
     }
 
 }

@@ -18,17 +18,14 @@
  */
 package org.apache.struts2.util;
 
-import com.opensymphony.xwork2.ognl.SecurityMemberAccess;
+import org.apache.struts2.ognl.SecurityMemberAccess;
+import jakarta.servlet.jsp.tagext.TagSupport;
 import org.apache.struts2.StrutsInternalTestCase;
 import org.apache.struts2.views.jsp.ActionTag;
 
-import javax.servlet.jsp.tagext.TagSupport;
 import java.lang.reflect.Member;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 public class SecurityMemberAccessInServletsTest extends StrutsInternalTestCase {
 
@@ -41,11 +38,9 @@ public class SecurityMemberAccessInServletsTest extends StrutsInternalTestCase {
 
     public void testJavaxServletPackageAccess() throws Exception {
         // given
-        SecurityMemberAccess sma = new SecurityMemberAccess(true);
+        SecurityMemberAccess sma = new SecurityMemberAccess(null, null);
 
-        Set<Pattern> excluded = new HashSet<Pattern>();
-        excluded.add(Pattern.compile("^(?!javax\\.servlet\\..+)(javax\\..+)"));
-        sma.setExcludedPackageNamePatterns(excluded);
+        sma.useExcludedPackageNamePatterns("^(?!jakarta\\.servlet\\..+)(jakarta\\..+)");
 
         String propertyName = "value";
         Member member = TagSupport.class.getMethod("doStartTag");
@@ -54,16 +49,14 @@ public class SecurityMemberAccessInServletsTest extends StrutsInternalTestCase {
         boolean actual = sma.isAccessible(context, new ActionTag(), member, propertyName);
 
         // then
-        assertTrue("javax.servlet package isn't accessible!", actual);
+        assertTrue("jakarta.servlet package isn't accessible!", actual);
     }
 
     public void testJavaxServletPackageExclusion() throws Exception {
         // given
-        SecurityMemberAccess sma = new SecurityMemberAccess(true);
+        SecurityMemberAccess sma = new SecurityMemberAccess(null, null);
 
-        Set<Pattern> excluded = new HashSet<>();
-        excluded.add(Pattern.compile("^javax\\..+"));
-        sma.setExcludedPackageNamePatterns(excluded);
+        sma.useExcludedPackageNamePatterns("^jakarta\\..+");
 
         String propertyName = "value";
         Member member = TagSupport.class.getMethod("doStartTag");
@@ -72,7 +65,7 @@ public class SecurityMemberAccessInServletsTest extends StrutsInternalTestCase {
         boolean actual = sma.isAccessible(context, new ActionTag(), member, propertyName);
 
         // then
-        assertFalse("javax.servlet package is accessible!", actual);
+        assertFalse("jakarta.servlet package is accessible!", actual);
     }
 
 }

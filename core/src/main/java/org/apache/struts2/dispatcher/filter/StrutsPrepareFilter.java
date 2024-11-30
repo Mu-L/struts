@@ -18,22 +18,20 @@
  */
 package org.apache.struts2.dispatcher.filter;
 
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.struts2.StrutsStatics;
 import org.apache.struts2.dispatcher.Dispatcher;
 import org.apache.struts2.dispatcher.InitOperations;
 import org.apache.struts2.dispatcher.PrepareOperations;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Prepares the request for execution by a later {@link org.apache.struts2.dispatcher.filter.StrutsExecuteFilter} filter instance.
@@ -43,8 +41,8 @@ public class StrutsPrepareFilter implements StrutsStatics, Filter {
     protected static final String REQUEST_EXCLUDED_FROM_ACTION_MAPPING = StrutsPrepareFilter.class.getName() + ".REQUEST_EXCLUDED_FROM_ACTION_MAPPING";
 
     protected PrepareOperations prepare;
-    protected List<Pattern> excludedPatterns;
 
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         InitOperations init = createInitOperations();
         Dispatcher dispatcher = null;
@@ -53,8 +51,6 @@ public class StrutsPrepareFilter implements StrutsStatics, Filter {
             dispatcher = init.initDispatcher(config);
 
             prepare = createPrepareOperations(dispatcher);
-            // Note: Currently, excluded patterns are not refreshed following an XWork config reload
-            this.excludedPatterns = init.buildExcludedPatternsList(dispatcher);
 
             postInit(dispatcher, filterConfig);
         } finally {
@@ -94,6 +90,7 @@ public class StrutsPrepareFilter implements StrutsStatics, Filter {
     protected void postInit(Dispatcher dispatcher, FilterConfig filterConfig) {
     }
 
+    @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) req;
@@ -102,7 +99,7 @@ public class StrutsPrepareFilter implements StrutsStatics, Filter {
         boolean didWrap = false;
         try {
             prepare.trackRecursion(request);
-            if (prepare.isUrlExcluded(request, excludedPatterns)) {
+            if (prepare.isUrlExcluded(request)) {
                 request.setAttribute(REQUEST_EXCLUDED_FROM_ACTION_MAPPING, true);
             } else {
                 request.setAttribute(REQUEST_EXCLUDED_FROM_ACTION_MAPPING, false);
@@ -122,6 +119,7 @@ public class StrutsPrepareFilter implements StrutsStatics, Filter {
         }
     }
 
+    @Override
     public void destroy() {
         prepare.cleanupDispatcher();
     }

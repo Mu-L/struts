@@ -18,15 +18,15 @@
  */
 package org.apache.struts2.components;
 
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.util.ValueStack;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.views.annotations.StrutsTag;
 import org.apache.struts2.views.annotations.StrutsTagAttribute;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -70,7 +70,7 @@ import java.util.Map;
  * {@literal @}s.tag name="updownselect" tld-body-content="JSP" tld-tag-class="org.apache.struts2.views.jsp.ui.UpDownSelectTag"
  * description="Render a up down select element"
  */
-@StrutsTag(name="updownselect", tldTagClass="org.apache.struts2.views.jsp.ui.UpDownSelectTag", 
+@StrutsTag(name="updownselect", tldTagClass="org.apache.struts2.views.jsp.ui.UpDownSelectTag",
         description="Create a Select component with buttons to move the elements in the select component up and down")
 public class UpDownSelect extends Select {
 
@@ -136,17 +136,17 @@ public class UpDownSelect extends Select {
             // inform form ancestor that we are using a custom onSubmit
             enableAncestorFormCustomOnsubmit();
 
-            Map m = (Map) ancestorForm.getParameters().get("updownselectIds");
+            Map m = (Map) ancestorForm.getAttributes().get("updownselectIds");
             if (m == null) {
                 // map with key -> id ,  value -> headerKey
                 m = new LinkedHashMap();
             }
-            m.put(getParameters().get("id"), getParameters().get("headerKey"));
-            ancestorForm.getParameters().put("updownselectIds", m);
+            m.put(getAttributes().get("id"), getAttributes().get("headerKey"));
+            ancestorForm.getAttributes().put("updownselectIds", m);
         }
         else {
             if (LOG.isWarnEnabled()) {
-        	LOG.warn("no ancestor form found for updownselect "+this+", therefore autoselect of all elements upon form submission will not work ");
+                LOG.warn("no ancestor form found for updownselect {}, therefore autoselect of all elements upon form submission will not work ", this);
             }
         }
     }

@@ -18,15 +18,16 @@
  */
 package org.apache.struts2.result;
 
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.inject.Inject;
-import com.opensymphony.xwork2.security.NotExcludedAcceptedPatternsChecker;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.inject.Inject;
+import org.apache.struts2.security.NotExcludedAcceptedPatternsChecker;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serial;
 
 /**
  * A custom Result type for sending raw data (via an InputStream) directly to the
@@ -47,7 +48,7 @@ import java.io.OutputStream;
  * <li><b>bufferSize</b> - the size of the buffer to copy from input to output
  * (default = <code>1024</code>).</li>
  * <li><b>allowCaching</b> if set to 'false' it will set the headers 'Pragma' and 'Cache-Control'
- * to 'no-cahce', and prevent client from caching the content. (default = <code>true</code>)
+ * to 'no-cache', and prevent client from caching the content. (default = <code>true</code>)
  * <li><b>contentCharSet</b> if set to a string, ';charset=value' will be added to the
  * content-type header, where value is the string set. If set to an expression, the result
  * of evaluating the expression will be used. If not set, then no charset will be set on
@@ -72,6 +73,7 @@ import java.io.OutputStream;
  */
 public class StreamResult extends StrutsResultSupport {
 
+    @Serial
     private static final long serialVersionUID = -1468409635999059850L;
 
     protected static final Logger LOG = LogManager.getLogger(StreamResult.class);
@@ -205,7 +207,7 @@ public class StreamResult extends StrutsResultSupport {
     }
 
     /**
-     * @see StrutsResultSupport#doExecute(java.lang.String, com.opensymphony.xwork2.ActionInvocation)
+     * @see StrutsResultSupport#doExecute(java.lang.String, ActionInvocation)
      */
     protected void doExecute(String finalLocation, ActionInvocation invocation) throws Exception {
         LOG.debug("Find the Response in context");
@@ -232,7 +234,7 @@ public class StreamResult extends StrutsResultSupport {
             HttpServletResponse oResponse = invocation.getInvocationContext().getServletResponse();
 
             LOG.debug("Set the content type: {};charset{}", contentType, contentCharSet);
-            if (contentCharSet != null && !contentCharSet.equals("")) {
+            if (contentCharSet != null && !contentCharSet.isEmpty()) {
                 oResponse.setContentType(conditionalParse(contentType, invocation) + ";charset=" + conditionalParse(contentCharSet, invocation));
             } else {
                 oResponse.setContentType(conditionalParse(contentType, invocation));

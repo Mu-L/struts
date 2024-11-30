@@ -18,11 +18,11 @@
  */
 package org.apache.struts2.interceptor;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.interceptor.ParametersInterceptor;
-import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.action.ParameterNameAware;
 import org.apache.struts2.dispatcher.HttpParameters;
 import org.apache.struts2.dispatcher.mapper.ActionMapping;
+import org.apache.struts2.interceptor.parameter.ParametersInterceptor;
 
 import java.util.Map;
 
@@ -53,9 +53,9 @@ import java.util.Map;
  * <!-- START SNIPPET: extending -->
  *
  * <p>
- * The best way to add behavior to this interceptor is to utilize the {@link com.opensymphony.xwork2.interceptor.ParameterNameAware} interface in your
+ * The best way to add behavior to this interceptor is to utilize the {@link ParameterNameAware} interface in your
  * actions. However, if you wish to apply a global rule that isn't implemented in your action, then you could extend
- * this interceptor and override the {@link #acceptableName(String)} method.
+ * this interceptor and override the {@link #isAcceptableName(String)} method.
  * </p>
  *
  * <!-- END SNIPPET: extending -->
@@ -75,17 +75,17 @@ public class ActionMappingParametersInterceptor extends ParametersInterceptor {
 
     /**
      * Get the parameter map from ActionMapping associated with the provided ActionContext.
-     * 
-     * @param ac The action context
+     *
+     * @param actionContext The action context
      * @return the parameters from the action mapping in the context.  If none found, returns an empty map.
      */
     @Override
-    protected HttpParameters retrieveParameters(ActionContext ac) {
-        ActionMapping mapping = ac.getActionMapping();
+    protected HttpParameters retrieveParameters(ActionContext actionContext) {
+        ActionMapping mapping = actionContext.getActionMapping();
         if (mapping != null) {
-            return HttpParameters.create(mapping.getParams()).buildNoNestedWrapping();
+            return HttpParameters.create(mapping.getParams()).build();
         } else {
-            return HttpParameters.create().buildNoNestedWrapping();
+            return HttpParameters.create().build();
         }
     }
 
@@ -101,7 +101,6 @@ public class ActionMappingParametersInterceptor extends ParametersInterceptor {
     protected void addParametersToContext(ActionContext ac, Map<String, ?> newParams) {
         HttpParameters previousParams = ac.getParameters();
         HttpParameters.Builder combinedParams = HttpParameters.create().withParent(previousParams).withExtraParams(newParams);
-
-        ac.setParameters(combinedParams.buildNoNestedWrapping());
+        ac.withParameters(combinedParams.build());
     }
 }

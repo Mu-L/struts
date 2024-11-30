@@ -18,15 +18,15 @@
  */
 package org.apache.struts2.components;
 
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.util.ValueStack;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.views.annotations.StrutsTag;
 import org.apache.struts2.views.annotations.StrutsTagAttribute;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -174,7 +174,7 @@ public class InputTransferSelect extends ListUIBean {
 
 
             // key -> select tag id, value -> headerKey (if exists)
-            Map formInputtransferselectIds = (Map) formAncestor.getParameters().get("inputtransferselectIds");
+            Map formInputtransferselectIds = (Map) formAncestor.getAttributes().get("inputtransferselectIds");
 
             // init lists
             if (formInputtransferselectIds == null) {
@@ -182,18 +182,18 @@ public class InputTransferSelect extends ListUIBean {
             }
 
             // id
-            String tmpId = (String) getParameters().get("id");
-            String tmpHeaderKey = (String) getParameters().get("headerKey");
+            String tmpId = (String) getAttributes().get("id");
+            String tmpHeaderKey = (String) getAttributes().get("headerKey");
             if (tmpId != null && (! formInputtransferselectIds.containsKey(tmpId))) {
                 formInputtransferselectIds.put(tmpId, tmpHeaderKey);
             }
 
-            formAncestor.getParameters().put("inputtransferselectIds", formInputtransferselectIds);
+            formAncestor.getAttributes().put("inputtransferselectIds", formInputtransferselectIds);
 
         }
         else {
             if (LOG.isWarnEnabled()) {
-        	LOG.warn("form enclosing inputtransferselect "+this+" not found, auto select upon form submit of inputtransferselect will not work");
+                LOG.warn("form enclosing inputtransferselect {} not found, auto select upon form submit of inputtransferselect will not work", this);
             }
         }
     }

@@ -20,12 +20,12 @@
  */
 -->
 <!DOCTYPE struts PUBLIC
-        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
-        "https://struts.apache.org/dtds/struts-2.5.dtd">
+        "-//Apache Software Foundation//DTD Struts Configuration 6.0//EN"
+        "https://struts.apache.org/dtds/struts-6.0.dtd">
 
 <struts>
 
-    <bean type="com.opensymphony.xwork2.factory.ResultFactory"
+    <bean type="org.apache.struts2.factory.ResultFactory"
           name="myResultFactory" class="org.apache.struts2.factory.MyResultFactory" />
 
     <constant name="struts.objectFactory.resultFactory" value="myResultFactory" />

@@ -18,12 +18,11 @@
  */
 package org.apache.struts2.result;
 
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.Result;
-import com.opensymphony.xwork2.util.TextParseUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.struts2.ActionInvocation;
 import org.apache.struts2.StrutsStatics;
+import org.apache.struts2.util.TextParseUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -44,7 +43,7 @@ import java.util.Collection;
  * <ul>
  * <li>location - the location to go to after execution (could be a jsp page or another action).
  * It can be parsed as per the rules definied in the
- * {@link TextParseUtil#translateVariables(java.lang.String, com.opensymphony.xwork2.util.ValueStack) translateVariables}
+ * {@link TextParseUtil#translateVariables(java.lang.String, org.apache.struts2.util.ValueStack) translateVariables}
  * method</li>
  * <li>parse - true by default. If set to false, the location param will not be parsed for expressions</li>
  * <li>encode - false by default. If set to false, the location param will not be url encoded. This only have effect when parse is true</li>
@@ -106,11 +105,11 @@ import java.util.Collection;
  * </pre>
  *
  * <p>
- * Please see the {@link com.opensymphony.xwork2.Result} class for more info on Results in general.
+ * Please see the {@link Result} class for more info on Results in general.
  * </p>
  * <!-- END SNIPPET: example -->
  *
- * @see com.opensymphony.xwork2.Result
+ * @see Result
  */
 public abstract class StrutsResultSupport implements Result, StrutsStatics {
 
@@ -154,7 +153,7 @@ public abstract class StrutsResultSupport implements Result, StrutsStatics {
     public void setLocation(String location) {
         this.location = location;
     }
-    
+
     /**
      * Gets the location it was created with, mainly for testing
      *
@@ -201,6 +200,7 @@ public abstract class StrutsResultSupport implements Result, StrutsStatics {
      * @param invocation the execution state of the action.
      * @throws Exception if an error occurs while executing the result.
      */
+    @Override
     public void execute(ActionInvocation invocation) throws Exception {
         lastFinalLocation = parseLocation ? conditionalParse(location, invocation) : location;
         doExecute(lastFinalLocation, invocation);
@@ -216,7 +216,7 @@ public abstract class StrutsResultSupport implements Result, StrutsStatics {
     protected String conditionalParse(String param, ActionInvocation invocation) {
         if (parse && param != null && invocation != null) {
             return TextParseUtil.translateVariables(
-                param, 
+                param,
                 invocation.getStack(),
                 new EncodingParsedValueEvaluator());
         } else {
@@ -228,7 +228,7 @@ public abstract class StrutsResultSupport implements Result, StrutsStatics {
      * As {@link #conditionalParse(String, ActionInvocation)} but does not
      * convert found object into String. If found object is a collection it is
      * returned if found object is not a collection it is wrapped in one.
-     * 
+     *
      * @param param parameter
      * @param invocation action invocation
      * @param excludeEmptyElements 'true' for excluding empty elements
@@ -237,7 +237,7 @@ public abstract class StrutsResultSupport implements Result, StrutsStatics {
     protected Collection<String> conditionalParseCollection(String param, ActionInvocation invocation, boolean excludeEmptyElements) {
         if (parse && param != null && invocation != null) {
             return TextParseUtil.translateVariablesCollection(
-                param, 
+                param,
                 invocation.getStack(),
                 excludeEmptyElements,
                 new EncodingParsedValueEvaluator());
@@ -249,11 +249,11 @@ public abstract class StrutsResultSupport implements Result, StrutsStatics {
     }
 
     /**
-     * {@link com.opensymphony.xwork2.util.TextParseUtil.ParsedValueEvaluator} to do URL encoding for found values. To be
+     * {@link org.apache.struts2.util.TextParseUtil.ParsedValueEvaluator} to do URL encoding for found values. To be
      * used for single strings or collections.
-     * 
      */
     private final class EncodingParsedValueEvaluator implements TextParseUtil.ParsedValueEvaluator {
+        @Override
         public Object evaluate(String parsedValue) {
             if (encode) {
                 if (parsedValue != null) {

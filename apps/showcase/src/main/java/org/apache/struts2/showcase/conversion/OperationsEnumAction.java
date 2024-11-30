@@ -20,7 +20,8 @@
  */
 package org.apache.struts2.showcase.conversion;
 
-import com.opensymphony.xwork2.ActionSupport;
+import org.apache.struts2.ActionSupport;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -33,7 +34,7 @@ public class OperationsEnumAction extends ActionSupport {
 
 	private static final long serialVersionUID = -2229489704988870318L;
 
-	private List<OperationsEnum> selectedOperations = new LinkedList<OperationsEnum>();
+	private List<OperationsEnum> selectedOperations = new LinkedList<>();
 
 	public String input() throws Exception {
 		return SUCCESS;
@@ -47,10 +48,10 @@ public class OperationsEnumAction extends ActionSupport {
 		return this.selectedOperations;
 	}
 
+	@StrutsParameter
 	public void setSelectedOperations(List<OperationsEnum> selectedOperations) {
 		this.selectedOperations = selectedOperations;
 	}
-
 
 	public List<OperationsEnum> getAvailableOperations() {
 		return Arrays.asList(OperationsEnum.values());

@@ -18,13 +18,12 @@
  */
 package org.apache.struts2.rest.handler;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
-import com.opensymphony.xwork2.XWorkTestCase;
-import com.opensymphony.xwork2.mock.MockActionInvocation;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionSupport;
+import org.apache.struts2.XWorkTestCase;
+import org.apache.struts2.mock.MockActionInvocation;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
-import com.thoughtworks.xstream.security.ExplicitTypePermission;
 import com.thoughtworks.xstream.security.TypePermission;
 import org.apache.struts2.rest.handler.xstream.XStreamAllowedClassNames;
 import org.apache.struts2.rest.handler.xstream.XStreamAllowedClasses;
@@ -39,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -56,7 +54,7 @@ public class XStreamHandlerTest extends XWorkTestCase {
         handler = new XStreamHandler();
         ai = new MockActionInvocation();
         ActionSupport action = new ActionSupport();
-        ActionContext context = ActionContext.of(new HashMap<>()).withLocale(Locale.US);
+        ActionContext context = ActionContext.of().withLocale(Locale.US);
         ai.setInvocationContext(context);
         ai.setAction(action);
     }

@@ -18,12 +18,12 @@
  */
 package org.apache.struts2.interceptor;
 
-import com.opensymphony.xwork2.Action;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.DefaultLocaleProviderFactory;
-import com.opensymphony.xwork2.mock.MockActionInvocation;
-import com.opensymphony.xwork2.mock.MockActionProxy;
+import org.apache.struts2.action.Action;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.locale.DefaultLocaleProviderFactory;
+import org.apache.struts2.mock.MockActionInvocation;
+import org.apache.struts2.mock.MockActionProxy;
 import junit.framework.TestCase;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.StrutsStatics;
@@ -33,8 +33,8 @@ import org.easymock.IArgumentMatcher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -145,6 +145,26 @@ public class I18nInterceptorTest extends TestCase {
 
         assertNotNull(session.get(I18nInterceptor.DEFAULT_SESSION_ATTRIBUTE)); // should be stored here
         assertEquals(Locale.getDefault(), session.get(I18nInterceptor.DEFAULT_SESSION_ATTRIBUTE)); // should create a locale object
+    }
+
+    public void testTrimableLocaleString1() throws Exception {
+        prepare(I18nInterceptor.DEFAULT_PARAMETER, "de\n");
+
+        interceptor.intercept(mai);
+
+        assertFalse(mai.getInvocationContext().getParameters().get(I18nInterceptor.DEFAULT_PARAMETER).isDefined()); // should have been removed
+        assertNotNull(session.get(I18nInterceptor.DEFAULT_SESSION_ATTRIBUTE)); // should be stored here
+        assertEquals(Locale.GERMAN, session.get(I18nInterceptor.DEFAULT_SESSION_ATTRIBUTE)); // should create a locale object
+    }
+
+    public void testTrimableLocaleString2() throws Exception {
+        prepare(I18nInterceptor.DEFAULT_PARAMETER, "de ");
+
+        interceptor.intercept(mai);
+
+        assertFalse(mai.getInvocationContext().getParameters().get(I18nInterceptor.DEFAULT_PARAMETER).isDefined()); // should have been removed
+        assertNotNull(session.get(I18nInterceptor.DEFAULT_SESSION_ATTRIBUTE)); // should be stored here
+        assertEquals(Locale.GERMAN, session.get(I18nInterceptor.DEFAULT_SESSION_ATTRIBUTE)); // should create a locale object
     }
 
     public void testWithVariant() throws Exception {
@@ -278,7 +298,7 @@ public class I18nInterceptorTest extends TestCase {
         Map<String, Serializable> params = new HashMap<>();
         params.put(key, value);
 
-        mai.getInvocationContext().setParameters(HttpParameters.create(params).build());
+        mai.getInvocationContext().withParameters(HttpParameters.create(params).build());
     }
 
     public void setUp() throws Exception {
@@ -287,7 +307,7 @@ public class I18nInterceptorTest extends TestCase {
         interceptor.init();
         session = new HashMap<>();
 
-        ac = ActionContext.of(new HashMap<>())
+        ac = ActionContext.of()
             .bind()
             .withSession(session)
             .withParameters(HttpParameters.create().build());
